@@ -2,6 +2,8 @@ name: frp
 
 on:
   schedule:
+    # * is a special character in YAML so you have to quote this string
+    # UTC 01:00 -> CST (China) 09:00, see https://datetime360.com/cn/utc-cst-china-time/
     - cron: '0 1 * * 1' # every monday at 1am
   push:
     branches:
@@ -28,7 +30,7 @@ jobs:
       - name: Get FRP version
         run: |
           FRP_VERSION=$(curl -sX GET "https://api.github.com/repos/fatedier/frp/releases/latest" | awk '/tag_name/{print $4;exit}' FS='[""]')
-          FRP_VERSION=${FRP_VERSION: 1}
+          FRP_VERSION=${FRP_VERSION: 1.0.0}
           echo "FRP_VERSION=$FRP_VERSION" >> $GITHUB_ENV
 
       - name: Docker meta
