@@ -30,7 +30,7 @@ jobs:
       - name: Get FRP version
         run: |
           CHEREVETO_VERSION=$(curl -sX GET "https://api.github.com/repos/rodber/chevereto-free/releases/latest" | awk '/tag_name/{print $4;exit}' FS='[""]');
-          CHEREVETO_VERSION=${CHEREVETO_VERSION: 1.0.0}
+          CHEREVETO_VERSION=${CHEREVETO_VERSION:-1.0.0}
           echo "CHEREVETO_VERSION=$CHEREVETO_VERSION" >> $GITHUB_ENV
 
       - name: Docker meta
@@ -48,7 +48,7 @@ jobs:
             type=schedule,pattern=nightly
             type=ref,event=branch
             type=edge,branch=main
-            type=semver,pattern={{version}},value=${{ env.FRP_VERSION }}
+            type=semver,pattern={{version}},value=${{ env.CHEREVETO_VERSION }}
           labels: |
             maintainer=lightnear
 

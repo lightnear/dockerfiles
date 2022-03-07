@@ -2,8 +2,8 @@ root = true
 
 [*]
 charset = utf-8
-# end_of_line = crlf
-indent_size = 4
+#end_of_line = lf
+indent_size = 2
 indent_style = space
 insert_final_newline = true
 trim_trailing_whitespace = true
@@ -577,16 +577,12 @@ ij_typescript_while_on_new_line = false
 ij_typescript_wrap_comments = false
 
 [{*.bash,*.sh,*.zsh}]
-end_of_line = lf
 ij_shell_binary_ops_start_line = false
 ij_shell_keep_column_alignment_padding = false
 ij_shell_minify_program = false
 ij_shell_redirect_followed_by_space = false
 ij_shell_switch_cases_indented = false
 ij_shell_use_unix_line_separator = true
-
-[{*.bat,*.ps1}]
-end_of_line = crlf
 
 [{*.cjs,*.js}]
 ij_javascript_align_imports = false
@@ -1179,8 +1175,6 @@ ij_properties_key_value_delimiter = equals
 ij_properties_spaces_around_key_value_delimiter = false
 
 [{*.yaml,*.yml}]
-indent_size = 2
-tab_width = 2
 ij_yaml_align_values_properties = do_not_align
 ij_yaml_autoinsert_sequence_marker = true
 ij_yaml_block_mapping_on_new_line = false

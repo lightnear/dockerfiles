@@ -1,5 +1,5 @@
 FROM composer:latest as composer
-FROM php:7.4-fpm-bullseye
+FROM php:7.4-apache
 COPY --from=composer /usr/bin/composer /usr/local/bin/composer
 
 LABEL maintainer="lightnear<lightnear@qq.com>"
@@ -7,13 +7,12 @@ LABEL maintainer="lightnear<lightnear@qq.com>"
 ENV TZ=Asia/Shanghai
 ENV LANG en_US.utf8
 
-RUN cat /etc/os-release
 # timezone & language
 RUN set -ex; \
-    echo 'deb https://mirrors.aliyun.com/debian/ bullseye main non-free contrib' > /etc/apt/sources.list; \
-    echo 'deb https://mirrors.aliyun.com/debian-security/ bullseye-security main' >> /etc/apt/sources.list; \
-    echo 'deb https://mirrors.aliyun.com/debian/ bullseye-updates main non-free contrib' >> /etc/apt/sources.list; \
-    echo 'deb https://mirrors.aliyun.com/debian/ bullseye-backports main non-free contrib' >> /etc/apt/sources.list; \
+    # echo 'deb http://mirrors.aliyun.com/debian/ bullseye main non-free contrib' > /etc/apt/sources.list; \
+    # echo 'deb http://mirrors.aliyun.com/debian-security/ bullseye-security main' >> /etc/apt/sources.list; \
+    # echo 'deb http://mirrors.aliyun.com/debian/ bullseye-updates main non-free contrib' >> /etc/apt/sources.list; \
+    # echo 'deb http://mirrors.aliyun.com/debian/ bullseye-backports main non-free contrib' >> /etc/apt/sources.list; \
     apt-get update; \
     apt-get -y upgrade; \
     apt-get -y install tzdata; \
@@ -25,8 +24,22 @@ RUN set -ex; \
     apt-get -y autoremove; \
     apt-get -y clean;
 
-# install the PHP extensions we need (https://chevereto-free.github.io/setup/server/requirements.html#php)
+# persistent dependencies
+RUN set -eux; \
+	apt-get update; \
+	apt-get install -y --no-install-recommends \
+# Ghostscript is required for rendering PDF previews
+		ghostscript \
+        rsync \
+        inotify-tools \
+	; \
+	rm -rf /var/lib/apt/lists/*
+
+# install the PHP extensions we need (https://make.wordpress.org/hosting/handbook/handbook/server-environment/#php-extensions)
 RUN set -ex; \
+	\
+	savedAptMark="$(apt-mark showmanual)"; \
+	\
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
 		libfreetype6-dev \
@@ -49,13 +62,16 @@ RUN set -ex; \
 		gd \
 		intl \
 		mysqli \
+        pdo \
+        pdo_mysql \
 		zip \
+        opcache \
 	; \
 # https://pecl.php.net/package/imagick
-    pecl install imagick-3.6.0; \
-    docker-php-ext-enable imagick; \
-    rm -rf /tmp/pear; \
-    \
+	pecl install imagick-3.6.0; \
+	docker-php-ext-enable imagick; \
+	rm -r /tmp/pear; \
+	\
 # some misbehaving extensions end up outputting to stdout 🙈 (https://github.com/docker-library/wordpress/issues/669#issuecomment-993945967)
 	out="$(php -r 'exit(0);')"; \
 	[ -z "$out" ]; \
@@ -63,11 +79,29 @@ RUN set -ex; \
 	[ -z "$err" ]; \
 	\
 	extDir="$(php -r 'echo ini_get("extension_dir");')"; \
-	[ -d "$extDir" ];
+	[ -d "$extDir" ]; \
+# reset apt-mark's "manual" list so that "purge --auto-remove" will remove all build dependencies
+	apt-mark auto '.*' > /dev/null; \
+	apt-mark manual $savedAptMark; \
+	ldd "$extDir"/*.so \
+		| awk '/=>/ { print $3 }' \
+		| sort -u \
+		| xargs -r dpkg-query -S \
+		| cut -d: -f1 \
+		| sort -u \
+		| xargs -rt apt-mark manual; \
+	\
+	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
+	rm -rf /var/lib/apt/lists/*; \
+	\
+	! { ldd "$extDir"/*.so | grep 'not found'; }; \
+# check for output like "PHP Warning:  PHP Startup: Unable to load dynamic library 'foo' (tried: ...)
+	err="$(php --version 3>&1 1>&2 2>&3)"; \
+	[ -z "$err" ]
+
 # set recommended PHP.ini settings
 # see https://secure.php.net/manual/en/opcache.installation.php
 RUN set -eux; \
-    mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"; \
 	docker-php-ext-enable opcache; \
 	{ \
 		echo 'opcache.memory_consumption=128'; \
@@ -90,6 +124,25 @@ RUN { \
 		echo 'ignore_repeated_source = Off'; \
 		echo 'html_errors = Off'; \
 	} > /usr/local/etc/php/conf.d/error-logging.ini
+
+RUN set -eux; \
+	a2enmod rewrite expires; \
+	\
+# https://httpd.apache.org/docs/2.4/mod/mod_remoteip.html
+	a2enmod remoteip; \
+	{ \
+		echo 'RemoteIPHeader X-Forwarded-For'; \
+# these IP ranges are reserved for "private" use and should thus *usually* be safe inside Docker
+		echo 'RemoteIPTrustedProxy 10.0.0.0/8'; \
+		echo 'RemoteIPTrustedProxy 172.16.0.0/12'; \
+		echo 'RemoteIPTrustedProxy 192.168.0.0/16'; \
+		echo 'RemoteIPTrustedProxy 169.254.0.0/16'; \
+		echo 'RemoteIPTrustedProxy 127.0.0.0/8'; \
+	} > /etc/apache2/conf-available/remoteip.conf; \
+	a2enconf remoteip; \
+# https://github.com/docker-library/wordpress/issues/383#issuecomment-507886512
+# (replace all instances of "%h" with "%a" in LogFormat)
+	find /etc/apache2 -type f -name '*.conf' -exec sed -ri 's/([[:space:]]*LogFormat[[:space:]]+"[^"]*)%h([^"]*")/\1%a\2/g' '{}' +
 
 ARG CHEVERETO_SOFTWARE=chevereto
 ARG CHEVERETO_TAG=free
@@ -131,22 +184,14 @@ RUN set -eux; \
     echo "post_max_size = \${CHEVERETO_POST_MAX_SIZE}"; \
     echo "max_execution_time = \${CHEVERETO_MAX_EXECUTION_TIME}"; \
     echo "memory_limit = \${CHEVERETO_MEMORY_LIMIT}"; \
+    echo "date.timezone = \${TZ}"; \
     } > $PHP_INI_DIR/conf.d/php_chevereto.ini
 
-RUN if [ -z ${CHEVERETO_RELEASE+x} ]; then \
-    CHEVERETO_RELEASE=$(curl -sX GET "https://api.github.com/repos/rodber/chevereto-free/releases/latest" \
-    | awk '/tag_name/{print $4;exit}' FS='[""]'); \
-    fi && \
-    curl -o /tmp/chevereto.tar.gz -L "https://github.com/rodber/chevereto-free/archive/${CHEVERETO_RELEASE}.tar.gz" && \
-    tar xf /tmp/chevereto.tar.gz -C /var/www/html --strip-components=1 && \
-    cd /var/www/html && \
-    composer install && \
-    echo "**** cleanup ****" && \
-    rm -rf /root/.cache /tmp/*
-
-VOLUME /var/www/html/content
 VOLUME /var/www/html/images
+VOLUME /var/www/html/content
 
-RUN chown -R www-data:www-data /var/www/html
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
-CMD ["php-fpm"]
+ENTRYPOINT ["docker-entrypoint.sh"]
+CMD ["apache2-foreground"]
