@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.0](https://github.com/lightnear/dockerfiles/compare/v1.2.0...v1.3.0) (2022-03-08)
+
+
+### Features
+
+* add zabbix-server 6.0 ([f5b52ae](https://github.com/lightnear/dockerfiles/commit/f5b52aef0b3d9a04ef2c06f23497654a503040a7))
+
 ## [1.2.0](https://github.com/lightnear/dockerfiles/compare/v1.1.0...v1.2.0) (2022-03-08)
 
 
