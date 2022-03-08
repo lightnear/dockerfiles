@@ -1,4 +1,4 @@
-FROM zabbix/zabbix-server-mysql:ubuntu-5.0-latest
+FROM zabbix/zabbix-server-pgsql:ubuntu-6.0-latest
 LABEL maintainer="lightnear<lightnear@qq.com>"
 
 ENV TZ=Asia/Shanghai
@@ -17,7 +17,7 @@ RUN set -ex; \
     dpkg-reconfigure --frontend noninteractive tzdata; \
     apt-get -y install locales; \
     localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8; \
-    apt-get install -y python3-pip; \
+    apt-get -y install python3-pip; \
     apt-get -y autoremove; \
     apt-get -y clean; \
     pip3 install requests; \

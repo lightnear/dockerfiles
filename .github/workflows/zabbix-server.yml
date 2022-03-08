@@ -17,9 +17,15 @@ on:
 jobs:
   docker:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      max-parallel: 1
+      matrix:
+        image: ['zabbix-server-mysql','zabbix-server-pgsql']
+        version: ['ubuntu-5.0-latest','ubuntu-6.0-latest']
 
     env:
-        IMAGE: lightnear/zabbix-server-mysql
+        IMAGE: lightnear/${{ matrix.image }}
 
     steps:
       - name: Checkout
@@ -33,8 +39,8 @@ jobs:
         with:
           # list of Docker images to use as base name for tags
           images: |
-            ${{ env.IMAGE }}
-            ghcr.io/${{ env.IMAGE }}
+            lightnear/${{ matrix.image }}
+            ghcr.io/lightnear/${{ matrix.image }}
           flavor: |
             latest=auto
           # generate Docker tags based on the following events/attributes
@@ -43,7 +49,7 @@ jobs:
             type=ref,event=branch
             type=edge,branch=main
             type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/tags/') }}
-            type=raw,value=ubuntu-5.0-latest,enable=${{ startsWith(github.ref, 'refs/tags/') }}
+            type=raw,value=${{ matrix.version }},enable=${{ startsWith(github.ref, 'refs/tags/') }}
           labels: |
             maintainer=lightnear
 
@@ -68,6 +74,10 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: edit Dockerfile
+        run: |
+          sed -i -e 's|FROM.*|FROM zabbix/${{ matrix.image }}:${{ matrix.version }}|' ./zabbix-server/Dockerfile
+
       - name: Build and push
         uses: docker/build-push-action@v2
         with:
@@ -78,5 +88,5 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=${{ env.IMAGE }}:buildcache
-          cache-to: type=registry,ref=${{ env.IMAGE }}:buildcache,mode=max
+          cache-from: type=registry,ref=lightnear/${{ matrix.image }}:buildcache
+          cache-to: type=registry,ref=lightnear/${{ matrix.image }}:buildcache,mode=max
