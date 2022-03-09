@@ -23,9 +23,9 @@ RUN set -ex; \
     { \
     echo "max_input_vars = 5000"; \
     echo "max_execution_time = 300"; \
-    echo "memory_limit = 1024M"; \
     echo "post_max_size = 50M"; \
     echo "upload_max_filesize = 50M"; \
+    echo "memory_limit = 1024M"; \
     echo "date.timezone = Asia/Shanghai"; \
     } > $PHP_INI_DIR/conf.d/php_newspaper.ini
 
