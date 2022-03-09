@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.3.1](https://github.com/lightnear/dockerfiles/compare/v1.3.0...v1.3.1) (2022-03-09)
+
+
+### Bug Fixes
+
+* set wordpress memory_limit in php.ini to 1024M ([f377f5c](https://github.com/lightnear/dockerfiles/commit/f377f5cdfda5b0611f7a7818b83991e34a4fdc2d))
+
 ## [1.3.0](https://github.com/lightnear/dockerfiles/compare/v1.2.0...v1.3.0) (2022-03-08)
 
 
