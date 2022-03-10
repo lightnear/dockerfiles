@@ -190,6 +190,7 @@ RUN set -eux; \
 VOLUME /var/www/html/images
 VOLUME /var/www/html/content
 
+COPY route.api.php /tmp/
 COPY docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 

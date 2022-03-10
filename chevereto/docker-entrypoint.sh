@@ -26,5 +26,10 @@ if [[ ! -f /var/www/html/index.php ]]; then
 fi
 # [[ -f /var/www/html/installer.php ]] && chown www-data:www-data /var/www/html/installer.php
 
+if [[ ! -f /var/www/html/app/routers/overrides/route.api.php ]]; then
+  mkdir -p /var/www/html/app/routers/overrides
+  mv /tmp/route.api.php /var/www/html/app/routers/overrides/
+fi
+
 # Run apache2 foreground
 exec "$@"
