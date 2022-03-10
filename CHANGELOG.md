@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.3.3](https://github.com/lightnear/dockerfiles/compare/v1.3.2...v1.3.3) (2022-03-10)
+
+
+### Bug Fixes
+
+* chevereto: upload to user's album ([0a458a4](https://github.com/lightnear/dockerfiles/commit/0a458a4e6d8a372ec5d659f323e323f8044d7788))
+
 ### [1.3.2](https://github.com/lightnear/dockerfiles/compare/v1.3.1...v1.3.2) (2022-03-10)
 
 
