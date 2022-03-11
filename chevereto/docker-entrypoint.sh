@@ -31,5 +31,6 @@ if [[ ! -f /var/www/html/app/routes/overrides/route.api.php ]]; then
   mv /tmp/route.api.php /var/www/html/app/routes/overrides/
 fi
 
+chown -R www-data:www-data /var/www/html
 # Run apache2 foreground
 exec "$@"

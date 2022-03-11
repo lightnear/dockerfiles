@@ -187,8 +187,7 @@ RUN set -eux; \
     echo "date.timezone = \${TZ}"; \
     } > $PHP_INI_DIR/conf.d/php_chevereto.ini
 
-VOLUME /var/www/html/images
-VOLUME /var/www/html/content
+VOLUME /var/www/html
 
 COPY route.api.php /tmp/
 COPY docker-entrypoint.sh /usr/local/bin/
