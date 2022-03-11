@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.3.4](https://github.com/lightnear/dockerfiles/compare/v1.3.3...v1.3.4) (2022-03-11)
+
+
+### Bug Fixes
+
+* add multilanguage support for chevereto ([bc6981e](https://github.com/lightnear/dockerfiles/commit/bc6981e409367bc401104c0899bd0aad9501c528))
+
 ### [1.3.3](https://github.com/lightnear/dockerfiles/compare/v1.3.2...v1.3.3) (2022-03-10)
 
 
