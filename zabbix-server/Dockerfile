@@ -21,4 +21,4 @@ RUN set -ex; \
     apt-get -y autoremove; \
     apt-get -y clean; \
     pip3 install requests; \
-    pip3 install --upgrade requests
+    pip3 install --upgrade requests pyzabbix
