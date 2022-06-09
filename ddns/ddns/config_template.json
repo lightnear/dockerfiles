@@ -1,18 +1,28 @@
-{
-    "0": {
-        "access_key_id": "",
-        "access_Key_secret": "",
-        "domain": "",
-        "sub_domain": "",
-        "ttl": "",
-        "ip_ver": 4
-    },
-    "1": {
-        "access_key_id": "",
-        "access_Key_secret": "",
-        "domain": "",
-        "sub_domain": "",
-        "ttl": "",
-        "ip_ver": 6
-    }
-}
+[
+  {
+    "dns": "aliyun",
+    "id": "",
+    "secret": "",
+    "domain": "",
+    "rr": "",
+    "ttl": "",
+    "ip_ver": 4
+  },
+  {
+    "dns": "dnspod",
+    "id": "",
+    "secret": "",
+    "domain": "",
+    "rr": "",
+    "ttl": "",
+    "ip_ver": 6
+  },
+  {
+    "dns": "cloudflare",
+    "token": "",
+    "domain": "",
+    "rr": "",
+    "ttl": "",
+    "ip_ver": 6
+  }
+]

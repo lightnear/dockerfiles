@@ -1194,8 +1194,8 @@ ij_visual_guides = 120
 ij_puppet_keep_indents_on_empty_lines = false
 
 [{*.py,*.pyw}]
-indent_size = 2
-tab_width = 2
+indent_size = 4
+tab_width = 4
 ij_continuation_indent_size = 4
 ij_visual_guides = 120
 ij_python_align_collections_and_comprehensions = true
