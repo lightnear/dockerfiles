@@ -6,22 +6,24 @@ from datetime import datetime
 import schedule
 import time
 import requests
-from alibabacloud_tea_console.client import Client as ConsoleClient
+import logging
 from aliyun import Aliyun
 from wechat import Wechat
 
+logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(name)s %(message)s')
+logger = logging.getLogger(__name__)
 
 # 加载配置文件
 def load_config():
     try:
         config_file = open("/etc/ddns/config.json", 'r')
-        # config_file = open("config.json", 'r')
+        # config_file = open("config_template.json", 'r')
         config_content = config_file.read()
         config_json = json.loads(config_content)
         return config_json
     except Exception as e:
-        ConsoleClient.error('加载配置文件失败，请检查配置文件')
-        ConsoleClient.error(e)
+        logger.error('加载配置文件失败，请检查配置文件')
+        logger.error(e)
         return []
 
 
@@ -39,7 +41,7 @@ def get_public_ip(ip_ver: int) -> str:
                     ip_addr = resp.content.decode().strip('\n')
                     return ip_addr
                 except Exception as e:
-                    ConsoleClient.error(e)
+                    logger.error(e)
                     fail_count += 1
                     time.sleep(1)
                     pass
@@ -52,7 +54,7 @@ def get_public_ip(ip_ver: int) -> str:
                     ip_addr = resp.content.decode().strip('\n')
                     return ip_addr
                 except Exception as e:
-                    ConsoleClient.error(e)
+                    logger.error(e)
                     fail_count += 1
                     time.sleep(1)
                     pass
@@ -78,8 +80,8 @@ def run_ddns() -> None:
                     rst = aliyun.ddns(domain, rr, ip_ver, ip_addr, ttl)
                     if rst == 0:
                         message += f"更新域名({rr}.{domain})的解析记录为 {ip_addr} \n"
-                except Exception as e:
-                    ConsoleClient.error(e)
+                except Exception as error:
+                    logger.error(error.message)
                     message += f"更新域名({rr}.{domain})的解析记录失败 \n"
             elif dns == 'dnspod':
                 pass

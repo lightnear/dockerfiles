@@ -4,6 +4,9 @@
 import json
 import datetime
 import requests
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 # 根据企业微信api接口文档，定义一个类，使用mpnews类型
@@ -29,7 +32,7 @@ class Wechat():
                 token = data['access_token']
                 create_time = data['create_time']
         except Exception as e:
-            print(e)
+            logger.error(e)
 
         if create_time < hour_before:
             url = "https://qyapi.weixin.qq.com/cgi-bin/gettoken"

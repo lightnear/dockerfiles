@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
 # update aliyun dns
 import sys
+import logging
 
 from Tea.core import TeaCore
-from typing import List
-
 from alibabacloud_alidns20150109.client import Client as DNSClient
 from alibabacloud_tea_openapi import models as open_api_models
 from alibabacloud_alidns20150109 import models as dns_models
-from alibabacloud_tea_console.client import Client as ConsoleClient
-from alibabacloud_tea_util.client import Client as UtilClient
-# from alibabacloud_darabonba_env.client import Client as EnvClient
+
+logger = logging.getLogger(__name__)
 
 
 class Aliyun:
@@ -42,16 +40,16 @@ class Aliyun:
         # 解析记录状态
         req.status = 'Enable'
         rst = []
-        # ConsoleClient.info(f'查询域名({rr}.{domain_name})的解析记录(json)↓')
+        # logger.info(f'查询域名({rr}.{domain_name})的解析记录(json)↓')
         try:
             resp = self.client.describe_domain_records(req)
-            # ConsoleClient.info(UtilClient.to_jsonstring(TeaCore.to_map(resp)))
+            # logger.info(UtilClient.to_jsonstring(TeaCore.to_map(resp)))
             for r in resp.body.domain_records.record:
                 if r.rr == rr:
                     rst.append(r)
             return rst
         except Exception as error:
-            ConsoleClient.error(error.message)
+            logger.error(error.message)
             raise
 
     # 查询域名解析记录
@@ -73,16 +71,16 @@ class Aliyun:
         # 解析记录状态
         req.status = 'ENABLE'
         rst = []
-        # ConsoleClient.info(f'查询域名({rr}.{domain_name})的解析记录(json)↓')
+        # logger.info(f'查询域名({rr}.{domain_name})的解析记录(json)↓')
         try:
             resp = await self.client.describe_domain_records_async(req)
-            # ConsoleClient.info(UtilClient.to_jsonstring(TeaCore.to_map(resp)))
+            # logger.info(UtilClient.to_jsonstring(TeaCore.to_map(resp)))
             for r in resp.body.domain_records:
                 if r.RR == rr:
                     rst.append(r)
             return rst
         except Exception as error:
-            ConsoleClient.error(error.message)
+            logger.error(error.message)
             raise
 
     # 添加域名解析记录
@@ -100,13 +98,13 @@ class Aliyun:
         req.type = record_type
         req.value = value
         req.ttl = ttl
-        # ConsoleClient.info('添加域名解析记录的结果(json)↓')
+        # logger.info('添加域名解析记录的结果(json)↓')
         try:
             resp = self.client.add_domain_record(req)
-            # ConsoleClient.info(UtilClient.to_jsonstring(TeaCore.to_map(resp)))
+            # logger.info(UtilClient.to_jsonstring(TeaCore.to_map(resp)))
             return resp.body.record_id
         except Exception as error:
-            ConsoleClient.error(error.message)
+            logger.error(error.message)
             raise
 
     # 添加域名解析记录
@@ -124,13 +122,13 @@ class Aliyun:
         req.type = record_type
         req.value = value
         req.ttl = ttl
-        # ConsoleClient.info('添加域名解析记录的结果(json)↓')
+        # logger.info('添加域名解析记录的结果(json)↓')
         try:
             resp = await self.client.add_domain_record_async(req)
-            # ConsoleClient.info(UtilClient.to_jsonstring(TeaCore.to_map(resp)))
+            # logger.info(UtilClient.to_jsonstring(TeaCore.to_map(resp)))
             return resp.body.record_id
         except Exception as error:
-            ConsoleClient.error(error.message)
+            logger.error(error.message)
             raise
 
     # 更新域名解析记录
@@ -148,13 +146,13 @@ class Aliyun:
         req.type = record_type
         req.value = value
         req.ttl = ttl
-        # ConsoleClient.info('更新域名解析记录的结果(json)↓')
+        # logger.info('更新域名解析记录的结果(json)↓')
         try:
             resp = self.client.update_domain_record(req)
-            # ConsoleClient.info(UtilClient.to_jsonstring(TeaCore.to_map(resp)))
+            # logger.info(UtilClient.to_jsonstring(TeaCore.to_map(resp)))
             return resp.body.record_id
         except Exception as error:
-            ConsoleClient.error(error.message)
+            logger.error(error.message)
             raise
 
     # 更新域名解析记录
@@ -172,13 +170,13 @@ class Aliyun:
         req.type = record_type
         req.value = value
         req.ttl = ttl
-        # ConsoleClient.info('更新域名解析记录的结果(json)↓')
+        # logger.info('更新域名解析记录的结果(json)↓')
         try:
             resp = await self.client.update_domain_record_async(req)
-            # ConsoleClient.info(UtilClient.to_jsonstring(TeaCore.to_map(resp)))
+            # logger.info(UtilClient.to_jsonstring(TeaCore.to_map(resp)))
             return resp.body.record_id
         except Exception as error:
-            ConsoleClient.error(error.message)
+            logger.error(error.message)
             raise
 
     # 删除域名解析记录
@@ -188,13 +186,13 @@ class Aliyun:
     ) -> str:
         req = dns_models.DeleteDomainRecordRequest()
         req.record_id = record_id
-        # ConsoleClient.info('删除域名解析记录的结果(json)↓')
+        # logger.info('删除域名解析记录的结果(json)↓')
         try:
             resp = self.client.delete_domain_record(req)
-            # ConsoleClient.info(UtilClient.to_jsonstring(TeaCore.to_map(resp)))
+            # logger.info(UtilClient.to_jsonstring(TeaCore.to_map(resp)))
             return resp.body.record_id
         except Exception as error:
-            ConsoleClient.error(error.message)
+            logger.error(error.message)
             raise
 
     # 删除域名解析记录
@@ -204,13 +202,13 @@ class Aliyun:
     ) -> str:
         req = dns_models.DeleteDomainRecordRequest()
         req.record_id = record_id
-        # ConsoleClient.info('删除域名解析记录的结果(json)↓')
+        # logger.info('删除域名解析记录的结果(json)↓')
         try:
             resp = await self.client.delete_domain_record_async(req)
-            # ConsoleClient.info(UtilClient.to_jsonstring(TeaCore.to_map(resp)))
+            # logger.info(UtilClient.to_jsonstring(TeaCore.to_map(resp)))
             return resp.body.record_id
         except Exception as error:
-            ConsoleClient.error(error.message)
+            logger.error(error.message)
             raise
 
     # 更新DNS记录
@@ -231,21 +229,21 @@ class Aliyun:
         rst = self.describe_domain_records(domain_name, rr, record_type)
         if len(rst) == 0:
             self.add_domain_record(domain_name, rr, record_type, ip_addr, ttl)
-            ConsoleClient.info(f'添加域名({rr}.{domain_name})的解析记录为 {ip_addr}')
+            logger.info(f'添加域名({rr}.{domain_name})的解析记录为 {ip_addr}')
             return 0
         elif len(rst) == 1:
             if rst[0].value == ip_addr:
-                ConsoleClient.info(f'域名({rr}.{domain_name})的解析记录为 {ip_addr}, 保持不变')
+                logger.info(f'域名({rr}.{domain_name})的解析记录为 {ip_addr}, 保持不变')
                 return 1
             else:
                 self.update_domain_record(rst[0].record_id, rr, record_type, ip_addr, ttl)
-                ConsoleClient.info(f'更新域名({rr}.{domain_name})的解析记录为 {ip_addr}')
+                logger.info(f'更新域名({rr}.{domain_name})的解析记录为 {ip_addr}')
                 return 0
         else:
             for r in rst:
                 self.delete_domain_record(r.record_id)
             self.add_domain_record(domain_name, rr, record_type, ip_addr, ttl)
-            ConsoleClient.info(f'更新域名({rr}.{domain_name})的解析记录为 {ip_addr}')
+            logger.info(f'更新域名({rr}.{domain_name})的解析记录为 {ip_addr}')
             return 0
 
 
