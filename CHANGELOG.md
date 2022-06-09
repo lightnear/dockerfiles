@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.0](https://github.com/lightnear/dockerfiles/compare/v1.3.4...v1.4.0) (2022-06-09)
+
+
+### Features
+
+* 更新aliyun ddns ([6daa55c](https://github.com/lightnear/dockerfiles/commit/6daa55c3a9dd4f1dc5ee2ef38a2794e08de7bc99))
+* add pyzabbix for zabbix-server ([daf17de](https://github.com/lightnear/dockerfiles/commit/daf17de53734f024f90fa81f543315cf24b9844d))
+
 ### [1.3.4](https://github.com/lightnear/dockerfiles/compare/v1.3.3...v1.3.4) (2022-03-11)
 
 
