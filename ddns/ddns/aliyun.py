@@ -12,6 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 class Aliyun:
+
     def __init__(self, access_key_id, access_key_secret):
         config = open_api_models.Config()
         # 传AccessKey ID入config
@@ -245,5 +246,3 @@ class Aliyun:
             self.add_domain_record(domain_name, rr, record_type, ip_addr, ttl)
             logger.info(f'更新域名({rr}.{domain_name})的解析记录为 {ip_addr}')
             return 0
-
-

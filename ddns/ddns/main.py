@@ -13,6 +13,7 @@ from wechat import Wechat
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(name)s %(message)s')
 logger = logging.getLogger(__name__)
 
+
 # 加载配置文件
 def load_config():
     try:
@@ -90,9 +91,9 @@ def run_ddns() -> None:
 
     # 发送消息
     if message:
-        corp_id = os.environ.get('CORP_ID') # corpid是企业号的标识
-        wechat_secret = os.environ.get('SECRET') # secret是应用凭证密钥
-        agent_id = os.environ.get('AGENT_ID') # agentid 是应用的标识
+        corp_id = os.environ.get('CORP_ID')  # corpid是企业号的标识
+        wechat_secret = os.environ.get('SECRET')  # secret是应用凭证密钥
+        agent_id = os.environ.get('AGENT_ID')  # agentid 是应用的标识
         wechat = Wechat(corp_id, wechat_secret, agent_id)
         to = '@all'
         subject = 'DDNS更新消息：'

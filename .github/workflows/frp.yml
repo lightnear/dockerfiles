@@ -1,10 +1,12 @@
 name: frp
 
 on:
-  schedule:
-    # * is a special character in YAML so you have to quote this string
-    # UTC 01:00 -> CST (China) 09:00, see https://datetime360.com/cn/utc-cst-china-time/
-    - cron: '0 1 * * 1' # every monday at 1am
+  repository_dispatch:
+    types: [on-docker-build]
+  # schedule:
+  #   # * is a special character in YAML so you have to quote this string
+  #   # UTC 01:00 -> CST (China) 09:00, see https://datetime360.com/cn/utc-cst-china-time/
+  #   - cron: '0 1 * * 1' # every monday at 1am
   push:
     branches:
       - 'main'
