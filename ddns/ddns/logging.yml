@@ -1,0 +1,44 @@
+version: 1
+disable_existing_loggers: true
+formatters:
+  brief:
+    format: "%(asctime)s.%(msecs)03d %(levelname)-7s %(process)7d --- [%(name)-12s] %(funcName)-16s: %(message)s"
+    datefmt: "%Y-%m-%dT%H:%M:%S"
+  standard:
+    format: "%(asctime)s.%(msecs)03d %(levelname)-7s %(process)7d --- [%(name)-12s] %(funcName)-16s: %(message)s"
+    datefmt: "%Y-%m-%dT%H:%M:%S"
+handlers:
+  console:
+    class: logging.StreamHandler
+    formatter: brief
+    level: DEBUG
+    stream: ext://sys.stdout
+  file:
+    class: logging.handlers.TimedRotatingFileHandler
+    formatter: standard
+    level: INFO
+    filename: ddns.log
+    when: D
+    interval: 1
+    backupCount: 5
+  errfile:
+    class: logging.handlers.TimedRotatingFileHandler
+    formatter: standard
+    level: ERROR
+    filename: ddns.error.log
+    when: D
+    interval: 1
+    backupCount: 5
+loggers:
+  console:
+    level: INFO
+    propagate: true
+    handlers: [console]
+  ddns:
+    level: INFO
+    propagate: true
+    handlers: [console, file, errfile]
+root:
+  level: INFO
+  propagate: true
+  handlers: [console]

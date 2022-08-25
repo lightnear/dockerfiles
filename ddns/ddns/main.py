@@ -1,16 +1,20 @@
 # -*- coding: UTF-8 -*-
 import os
-import sys
 import json
-from datetime import datetime
 import schedule
 import time
 import requests
 import logging
-from aliyun import Aliyun
+import logging.config
+import yaml
+from dns.alidns import Alidns
+from dns.cloudflare import Cloudflare
 from wechat import Wechat
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(name)s %(message)s')
+config = {}
+with open("logging.yml", 'r') as r:
+    config = yaml.safe_load(r)
+logging.config.dictConfig(config)
 logger = logging.getLogger(__name__)
 
 
@@ -77,8 +81,8 @@ def run_ddns() -> None:
                 ip_ver = v['ip_ver']
                 try:
                     ip_addr = get_public_ip(ip_ver)
-                    aliyun = Aliyun(id, secret)
-                    rst = aliyun.ddns(domain, rr, ip_ver, ip_addr, ttl)
+                    alidns = Alidns(id, secret)
+                    rst = alidns.ddns(domain, rr, ip_ver, ip_addr, ttl)
                     if rst == 0:
                         message += f"更新域名({rr}.{domain})的解析记录为 {ip_addr} \n"
                 except Exception as error:
@@ -87,7 +91,20 @@ def run_ddns() -> None:
             elif dns == 'dnspod':
                 pass
             elif dns == 'cloudflare':
-                pass
+                token = v['token']
+                domain = v['domain']
+                rr = v['rr']
+                ttl = v['ttl']
+                ip_ver = v['ip_ver']
+                try:
+                    ip_addr = get_public_ip(ip_ver)
+                    cf = Cloudflare(token)
+                    rst = cf.ddns(domain, rr, ip_ver, ip_addr, ttl)
+                    if rst == 0:
+                        message += f"更新域名({rr}.{domain})的解析记录为 {ip_addr} \n"
+                except Exception as error:
+                    logger.error(error.message)
+                    message += f"更新域名({rr}.{domain})的解析记录失败 \n"
 
     # 发送消息
     if message:
