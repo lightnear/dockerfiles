@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.5.0](https://github.com/lightnear/dockerfiles/compare/v1.4.1...v1.5.0) (2022-08-25)
+
+
+### Features
+
+* add cloudflare ddns ([300f2ad](https://github.com/lightnear/dockerfiles/commit/300f2ad91195334a0b9f24384bd8332f68dfc225))
+
 ### [1.4.1](https://github.com/lightnear/dockerfiles/compare/v1.4.0...v1.4.1) (2022-06-09)
 
 
