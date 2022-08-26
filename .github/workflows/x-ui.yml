@@ -1,4 +1,4 @@
-name: debian
+name: x-ui
 
 on:
   repository_dispatch:
