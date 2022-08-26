@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.6.0](https://github.com/lightnear/dockerfiles/compare/v1.5.0...v1.6.0) (2022-08-26)
+
+
+### Features
+
+* add x-ui ([3423e28](https://github.com/lightnear/dockerfiles/commit/3423e284481761512179b439ebcb9daeebcb2185))
+
 ## [1.5.0](https://github.com/lightnear/dockerfiles/compare/v1.4.1...v1.5.0) (2022-08-25)
 
 
