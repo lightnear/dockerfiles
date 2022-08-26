@@ -45,8 +45,6 @@ jobs:
             type=ref,event=branch
             type=edge,branch=main
             type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/tags/') }}
-            type=raw,value=11,enable=${{ startsWith(github.ref, 'refs/tags/') }}
-            type=raw,value=bullseye,enable=${{ startsWith(github.ref, 'refs/tags/') }}
           labels: |
             maintainer=lightnear
 
