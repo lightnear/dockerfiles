@@ -114,7 +114,8 @@ def run_ddns() -> None:
         wechat = Wechat(corp_id, wechat_secret, agent_id)
         to = '@all'
         subject = 'DDNS更新消息：'
-        wechat.send_message(to, subject, message, agent_id)
+        r = wechat.send_message(to, subject, message, agent_id)
+
 
 
 # 运行
