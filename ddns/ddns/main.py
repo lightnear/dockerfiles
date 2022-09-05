@@ -85,8 +85,8 @@ def run_ddns() -> None:
                     rst = alidns.ddns(domain, rr, ip_ver, ip_addr, ttl)
                     if rst == 0:
                         message += f"更新域名({rr}.{domain})的解析记录为 {ip_addr} \n"
-                except Exception as error:
-                    logger.error(error.message)
+                except Exception as e:
+                    logger.error(e)
                     message += f"更新域名({rr}.{domain})的解析记录失败 \n"
             elif dns == 'dnspod':
                 pass
@@ -102,8 +102,8 @@ def run_ddns() -> None:
                     rst = cf.ddns(domain, rr, ip_ver, ip_addr, ttl)
                     if rst == 0:
                         message += f"更新域名({rr}.{domain})的解析记录为 {ip_addr} \n"
-                except Exception as error:
-                    logger.error(error.message)
+                except Exception as e:
+                    logger.error(e)
                     message += f"更新域名({rr}.{domain})的解析记录失败 \n"
 
     # 发送消息
