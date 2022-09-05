@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.6.2](https://github.com/lightnear/dockerfiles/compare/v1.6.1...v1.6.2) (2022-09-05)
+
+
+### Bug Fixes
+
+* update ddns ([fac8ea2](https://github.com/lightnear/dockerfiles/commit/fac8ea29407362a99462a5696599b3f9c1f4c629))
+* update ddns ([95d3e11](https://github.com/lightnear/dockerfiles/commit/95d3e11e816b6cb6b2661936feb827e355cde9f3))
+
 ### [1.6.1](https://github.com/lightnear/dockerfiles/compare/v1.6.0...v1.6.1) (2022-08-26)
 
 ## [1.6.0](https://github.com/lightnear/dockerfiles/compare/v1.5.0...v1.6.0) (2022-08-26)
