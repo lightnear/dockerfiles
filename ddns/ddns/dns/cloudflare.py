@@ -124,6 +124,7 @@ class Cloudflare:
         return record_id
 
     def ddns(self, domain, rr, ip_ver, ip_addr, ttl):
+        rst = {'code': 0, 'msg': None}
         record_type = 'A'
         if ip_ver == 6:
             record_type = 'AAAA'
@@ -131,26 +132,31 @@ class Cloudflare:
         zone_id = self.get_zone_id(domain)
         # 1.查询域名解析记录
         records = self.get_records(zone_id, domain, rr, record_type)
-        # 2.1 查询不到则新增
+        # 2.1 查询不到：新增
         if len(records) == 0:
             self.add_record(zone_id, domain, rr, record_type, ip_addr, ttl)
             self.logger.info(f'添加域名({rr}.{domain})的解析记录为 {ip_addr}')
-            return 0
-        # 2.2 只查到一条
+            rst['code'] = 0
+            rst['msg'] = f'添加域名({rr}.{domain})的解析记录为 {ip_addr}'
+        # 2.2 只查到一条：更新
         elif len(records) == 1:
             if records[0].get('content') == ip_addr:
                 self.logger.info(f'域名({rr}.{domain})的解析记录为 {ip_addr}, 保持不变')
-                return 1
+                rst['code'] = 1
+                rst['msg'] = f'域名({rr}.{domain})的解析记录为 {ip_addr}, 保持不变'
             else:
                 record_id = records[0].get('id')
                 self.update_record(zone_id, record_id, domain, rr, record_type, ip_addr, ttl)
                 self.logger.info(f'更新域名({rr}.{domain})的解析记录为 {ip_addr}')
-                return 0
+                rst['code'] = 0
+                rst['msg'] = f'更新域名({rr}.{domain})的解析记录为 {ip_addr}'
+        # 2.3 查到多条：先删除，再新增
         else:
             for record in records:
                 self.delete_record(zone_id, record.get('id'))
             self.add_record(zone_id, domain, rr, record_type, ip_addr, ttl)
             self.logger.info(f'更新域名({rr}.{domain})的解析记录为 {ip_addr}')
-            return 0
+            rst['code'] = 0
+            rst['msg'] = f'更新域名({rr}.{domain})的解析记录为 {ip_addr}'
 
-
+        return rst

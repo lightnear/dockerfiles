@@ -83,9 +83,10 @@ def run_ddns() -> None:
                     ip_addr = get_public_ip(ip_ver)
                     alidns = Alidns(id, secret)
                     rst = alidns.ddns(domain, rr, ip_ver, ip_addr, ttl)
-                    if rst == 0:
-                        message += f"更新域名({rr}.{domain})的解析记录为 {ip_addr} \n"
+                    if rst['code'] == 0:
+                        message += rst['msg'] + "\n"
                 except Exception as e:
+                    logger.error(f"更新域名({rr}.{domain})的解析记录失败")
                     logger.error(e)
                     message += f"更新域名({rr}.{domain})的解析记录失败 \n"
             elif dns == 'dnspod':
@@ -100,9 +101,10 @@ def run_ddns() -> None:
                     ip_addr = get_public_ip(ip_ver)
                     cf = Cloudflare(token)
                     rst = cf.ddns(domain, rr, ip_ver, ip_addr, ttl)
-                    if rst == 0:
-                        message += f"更新域名({rr}.{domain})的解析记录为 {ip_addr} \n"
+                    if rst['code'] == 0:
+                        message += rst['msg'] + "\n"
                 except Exception as e:
+                    logger.error(f"更新域名({rr}.{domain})的解析记录失败")
                     logger.error(e)
                     message += f"更新域名({rr}.{domain})的解析记录失败 \n"
 
@@ -115,7 +117,7 @@ def run_ddns() -> None:
         to = '@all'
         subject = 'DDNS更新消息：'
         r = wechat.send_message(to, subject, message, agent_id)
-
+        r = r
 
 
 # 运行
