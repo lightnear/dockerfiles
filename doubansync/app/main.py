@@ -40,6 +40,7 @@ def load_config(config_path):
 
 
 def douban_top250(config) -> None:
+    logger.info('开始同步豆瓣 TOP250')
     message = ""
     # 更新 豆瓣 TOP250 信息到数据库
     douban = Douban(config)
@@ -94,9 +95,11 @@ def douban_top250(config) -> None:
         to = '@all'
         subject = 'douban top 250'
         wechat.send_message(subject, message, to)
+    logger.info('完成同步豆瓣 TOP250')
 
 
 def imdb_top250(config) -> None:
+    logger.info('开始同步IMDB TOP250')
     message = ""
     # 更新 豆瓣 TOP250 信息到数据库
     imdb = Imdb(config)
@@ -148,6 +151,7 @@ def imdb_top250(config) -> None:
         to = '@all'
         subject = 'imdb top 250'
         wechat.send_message(subject, message, to)
+    logger.info('完成同步IMDB TOP250')
 
 def create_emby_playlist(config, name, emby_ids: list):
     emby = Emby(config)
@@ -164,6 +168,7 @@ def create_emby_playlist(config, name, emby_ids: list):
 
 
 def run_douban(config) -> None:
+    logger.info('开始同步豆瓣想看列表')
     message = ""
     douban = Douban(config)
     tmdb = Tmdb(config)
@@ -204,6 +209,7 @@ def run_douban(config) -> None:
         to = '@all'
         subject = '从豆瓣列表中找到新影视'
         wechat.send_message(subject, message, to)
+    logger.info('完成同步豆瓣想看列表')
 
 
 def add_medias(config):
@@ -212,6 +218,7 @@ def add_medias(config):
     :param config:
     :return:
     """
+    logger.info('开始同步PMR信息')
     message = ""
     radarr = Radarr(config)
     sonarr = Sonarr(config)
@@ -255,6 +262,7 @@ def add_medias(config):
         to = '@all'
         subject = '添加影视，将自动搜索下载'
         wechat.send_message(subject, message, to)
+    logger.info('完成同步PMR信息')
 
 
 def sync_emby(config):
@@ -263,6 +271,7 @@ def sync_emby(config):
     :param config:
     :return:
     """
+    logger.info('开始同步Emby信息')
     message = ""
     emby = Emby(config)
     medias = SqlHelper.search_medias_by_status('add')
@@ -293,6 +302,8 @@ def sync_emby(config):
         to = '@all'
         subject = '媒体库有新的影视剧，可以看了'
         wechat.send_message(subject, message, to)
+    logger.info('完成同步Emby信息')
+
 
 # 运行
 if __name__ == '__main__':
