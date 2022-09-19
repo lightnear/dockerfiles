@@ -1,64 +1,51 @@
+import logging
 import os
 import sqlite3
 import threading
 import time
 
-import log
-from app.utils.commons import singleton
-from config import Config
+from app.utils import singleton
 
 lock = threading.Lock()
 
-
 @singleton
 class MediaDb:
-    _db_path = None
-    _mediadb = None
+    logger = None
+    db_path = None
+    media_db = None
 
-    def __init__(self):
-        self._db_path = os.path.join(Config().get_config_path(), 'media.db')
-        self._mediadb = sqlite3.connect(database=self._db_path, timeout=5, check_same_thread=False)
+    def __init__(self, config_path):
+        self.logger = logging.getLogger(__name__)
+        self.db_path = os.path.join(config_path, 'media.db')
+        self.media_db = sqlite3.connect(database=self.db_path, timeout=5, check_same_thread=False)
         self.__init_tables()
 
     def __init_tables(self):
         with lock:
-            cursor = self._mediadb.cursor()
+            cursor = self.media_db.cursor()
             try:
-                # 媒体库同步信息表
-                cursor.execute('''CREATE TABLE IF NOT EXISTS MEDIASYNC_STATISTICS
-                                                   (ID INTEGER PRIMARY KEY AUTOINCREMENT     NOT NULL,
-                                                   SERVER    TEXT,
-                                                   TOTAL_COUNT  TEXT,
-                                                   MOVIE_COUNT    TEXT,
-                                                   TV_COUNT    TEXT,
-                                                   UPDATE_TIME     TEXT);''')
-                cursor.execute(
-                    '''CREATE INDEX IF NOT EXISTS INDX_MEDIASYNC_STATISTICS ON MEDIASYNC_STATISTICS (SERVER);''')
-                # 媒体数据表
-                cursor.execute('''CREATE TABLE IF NOT EXISTS MEDIASYNC_ITEMS
-                                                                   (ID INTEGER PRIMARY KEY AUTOINCREMENT     NOT NULL,
-                                                                   SERVER   TEXT,
-                                                                   LIBRARY    TEXT,
-                                                                   ITEM_ID  TEXT,
-                                                                   ITEM_TYPE    TEXT,
-                                                                   TITLE    TEXT,
-                                                                   ORGIN_TITLE     TEXT,
-                                                                   YEAR     TEXT,
-                                                                   TMDBID     TEXT,
-                                                                   IMDBID     TEXT,
-                                                                   PATH     TEXT,
-                                                                   NOTE     TEXT,
-                                                                   JSON     TEXT);''')
-                cursor.execute(
-                    '''CREATE INDEX IF NOT EXISTS INDX_MEDIASYNC_ITEMS_SL ON MEDIASYNC_ITEMS (SERVER, LIBRARY);''')
-                cursor.execute('''CREATE INDEX IF NOT EXISTS INDX_MEDIASYNC_ITEMS_LT ON MEDIASYNC_ITEMS (TITLE);''')
-                cursor.execute(
-                    '''CREATE INDEX IF NOT EXISTS INDX_MEDIASYNC_ITEMS_OT ON MEDIASYNC_ITEMS (ORGIN_TITLE);''')
-                cursor.execute('''CREATE INDEX IF NOT EXISTS INDX_MEDIASYNC_ITEMS_TI ON MEDIASYNC_ITEMS (TMDBID);''')
-                cursor.execute('''CREATE INDEX IF NOT EXISTS INDX_MEDIASYNC_ITEMS_II ON MEDIASYNC_ITEMS (ITEM_ID);''')
-                self._mediadb.commit()
+                sql = '''
+                CREATE TABLE IF NOT EXISTS media
+                  (id integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+                   title text,
+                   year text,
+                   media_type text,
+                   douban_id integer,
+                   tmdb_id integer,
+                   imdb_id text,
+                   tvdb_id integer,
+                   emby_id integer,
+                   status text,
+                   douban_top250 integer,
+                   imdb_top250 integer,
+                   create_time text,
+                   update_time text
+                   );
+                '''
+                cursor.execute(sql)
+                self.media_db.commit()
             except Exception as e:
-                log.error(f"【DB】创建数据库错误：{e}")
+                self.logger.error(f"【DB】创建数据库错误：{e}")
             finally:
                 cursor.close()
 
@@ -66,13 +53,13 @@ class MediaDb:
         if not sql:
             return False
         with lock:
-            cursor = self._mediadb.cursor()
+            cursor = self.media_db.cursor()
             try:
                 if data:
                     cursor.execute(sql, data)
                 else:
                     cursor.execute(sql)
-                self._mediadb.commit()
+                self.media_db.commit()
             except Exception as e:
                 print(str(e))
                 return False
@@ -84,7 +71,7 @@ class MediaDb:
         if not sql:
             return False
         with lock:
-            cursor = self._mediadb.cursor()
+            cursor = self.media_db.cursor()
             try:
                 if data:
                     res = cursor.execute(sql, data)
@@ -164,4 +151,6 @@ class MediaDb:
     def get_statistics(self, server_type):
         if not server_type:
             return None
-        return self.__select("SELECT TOTAL_COUNT, MOVIE_COUNT, TV_COUNT, UPDATE_TIME FROM MEDIASYNC_STATISTICS WHERE SERVER = ?", (server_type,))
+        return self.__select(
+            "SELECT TOTAL_COUNT, MOVIE_COUNT, TV_COUNT, UPDATE_TIME FROM MEDIASYNC_STATISTICS WHERE SERVER = ?",
+            (server_type,))

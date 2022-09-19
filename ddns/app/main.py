@@ -7,6 +7,7 @@ import requests
 import logging
 import logging.config
 import yaml
+import argparse
 from dns.alidns import Alidns
 from dns.cloudflare import Cloudflare
 from wechat import Wechat
@@ -19,13 +20,11 @@ logger = logging.getLogger(__name__)
 
 
 # 加载配置文件
-def load_config():
+def load_config(config_path):
     try:
-        config_file = open("/etc/ddns/config.json", 'r')
-        # config_file = open("config_template.json", 'r')
-        config_content = config_file.read()
-        config_json = json.loads(config_content)
-        return config_json
+        with open(config_path, 'r') as r:
+            config = yaml.safe_load(r)
+        return config
     except Exception as e:
         logger.error('加载配置文件失败，请检查配置文件')
         logger.error(e)
@@ -66,8 +65,8 @@ def get_public_ip(ip_ver: int) -> str:
     raise Exception(f"获取IP版本{ip_ver}地址失败")
 
 
-def run_ddns() -> None:
-    config_json = load_config()
+def run_ddns(config_path) -> None:
+    config_json = load_config(config_path)
     message = ""
     if (len(config_json) > 0):
         for v in config_json:
@@ -122,8 +121,13 @@ def run_ddns() -> None:
 
 # 运行
 if __name__ == '__main__':
-    run_ddns()
-    schedule.every(60).seconds.do(run_ddns)  # 每60秒执行一次
+    parser = argparse.ArgumentParser(description='ddns')
+    parser.add_argument('-c', '--config', default="/config/config.yml", help='config file')
+    args = parser.parse_args()
+    config_path = args.config
+
+    run_ddns(config_path)
+    schedule.every(60).seconds.do(run_ddns, config_path)  # 每60秒执行一次
     while True:
         schedule.run_pending()
         time.sleep(1)

@@ -1,0 +1,52 @@
+app:
+  # 【UserAgent】：可适当修改，用于站点签到、豆瓣数据抓取等
+  user_agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36"
+
+douban:
+  # 【用户ID列表】：豆瓣电影点个我主页people后面的那一串数字，或者使用豆瓣App个人信息中查看。可以配置多个，注意要加引号
+  # 这里可以是自己的，也可以是别人的，比如填写几个大V的账号ID，实现热门影视自动下载
+  users:
+    - user1
+    - user2
+  # 【豆瓣Cookie】：选配，嫌麻烦的可以不用配置，可能影响个别电影的同步
+  cookie:
+  # 【同步天数】：同步多少天内加入的数据
+  days: 2
+  # 【同步数据类型】：同步哪些类型的收藏数据：do 在看，wish 想看，collect 看过，用逗号分隔配置
+  types:
+    - wish
+
+tmdb:
+  base_url: https://api.themoviedb.org/3
+  token: eyJxxx.xxx
+  # proxies:
+  #  http:
+  #  https:
+
+imdb:
+  base_url: https://imdb-api.com/en/API
+  api_key: xxx
+
+radarr:
+  base_url: https://127.0.0.1/radarr/api/v3
+  api_key: xxx
+
+sonarr:
+  base_url: https://127.0.0.1/sonarr/api/v3
+  api_key: xxx
+
+# 配置Emby服务器信息
+emby:
+  # 【Emby服务器IP地址和端口】：注意区分http和https，http时可以不加http://，https时必须加https://
+  host: http://127.0.0.1:8096
+  # 【Emby ApiKey】：在Emby设置->高级->API密钥处生成，注意不要复制到了应用名称
+  api_key: xxx
+
+wechat:
+  # corpid:每个企业都拥有唯一的corpid，获取此信息可在管理后台“我的企业”－“企业信息”下查看“企业ID”（需要有管理员权限）
+  # corpsecret:自建应用secret。在管理后台->“应用与小程序”->“应用”->“自建”，点进某个应用，即可看到
+  # agentid:每个应用都有唯一的agentid。在管理后台->“应用与小程序”->“应用”，点进某个应用，即可看到agentid
+  # 具体不明白的参考企业微信的开发者中心
+  corpid: xxx
+  secret: xxx
+  agentid: 1000002

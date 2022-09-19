@@ -1,0 +1,166 @@
+import argparse
+import datetime
+import logging.config
+import os
+import random
+import re
+from time import sleep
+
+import yaml
+from cn2an import cn2an
+
+from app.db import MediaDb, SqlHelper
+from app.douban import DoubanApi, Douban
+from app.imdb import Imdb
+from app.media import Media
+from app.radarr import Radarr
+from app.sonarr import Sonarr
+from app.tmdb import Tmdb
+from app.types import MediaType
+
+log_config = {}
+with open("logging.yml", 'r') as r:
+    log_config = yaml.safe_load(r)
+logging.config.dictConfig(log_config)
+logger = logging.getLogger(__name__)
+
+# 加载配置文件
+def load_config(config_path):
+    try:
+        with open(config_path, 'r') as r:
+            config = yaml.safe_load(r)
+        return config
+    except Exception as e:
+        logger.error('加载配置文件失败，请检查配置文件')
+        logger.error(e)
+        return []
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='douban sync')
+    parser.add_argument('-c', '--config', default="../config/config.yml", help='config file')
+    args = parser.parse_args()
+    config_file = args.config
+    config = load_config(config_file)
+    config_path, _ = os.path.split(config_file)
+    os.environ['DB_CONFIG_PATH'] = os.path.abspath(config_path)
+    # logger.debug(config)
+
+
+
+    # doubanApi = DoubanApi()
+    # rsp = doubanApi.movie_detail(35460157)
+    # logger.info(rsp.get('title'))
+
+    # for i in range(1, 100):
+    #     logger.info(i)
+    #     rsp = doubanApi.movie_detail(35460157)
+    #     logger.info(rsp.get('title'))
+    #     if not rsp:
+    #         logger.error("-------------------")
+
+    #
+    # sleep(round(random.uniform(2, 6), 1))
+    # rsp = doubanApi.movie_top250()
+    # i = 1
+    # for item in rsp['subject_collection_items']:
+    #     print('-------------------------------')
+    #     print(i)
+    #     doubanId = item['id']
+    #     print(doubanId)
+    #     sleep(round(random.uniform(2, 6), 1))
+    #     detail = doubanApi.movie_detail(doubanId)
+    #     if detail:
+    #         print(detail['title'])
+    #         print(detail['year'])
+    #         print(detail['type'])
+    #     i += 1
+    #     print(item)
+
+
+    # douban = Douban(config)
+    # media_list = douban.get_douban_movies()
+    # for media in media_list:
+    #     print(media)
+    # media = douban.get_media_detail_from_web("https://movie.douban.com/subject/35101436/")
+    # print(media)
+    # media = douban.get_media_detail_from_web("https://movie.douban.com/subject/34477861/")
+    # print(media)
+
+    tmdb = Tmdb(config)
+    media = Media()
+    media.title = '大江大河2'
+    media.year = 2020
+    media.media_type = MediaType.TV
+    x = tmdb.match_tmdb(media)
+    logger.info(x)
+
+    # rsp = tmdb.movie_detail(278)
+    # logger.info(rsp)
+    # rsp = tmdb.search_movie('流浪地球', 2019)
+    # logger.info(rsp)
+    # if len(rsp.get('results')) == 1:
+    #     tmdb_id = rsp.get('results')[0]['id']
+    #     rsp = tmdb.movie_detail(tmdb_id)
+    #     logger.info(rsp)
+    # rsp = tmdb.search_tv('成瘾剂量', 2021)
+    # logger.info(rsp)
+    # if len(rsp.get('results')) == 1:
+    #     tmdb_id = rsp.get('results')[0]['id']
+    #     rsp = tmdb.tv_detail(tmdb_id)
+    #     logger.info(rsp)
+
+    # imdb = Imdb(config)
+    # imdb_ids = imdb.imdb_top250()
+    # logger.info(imdb_ids)
+
+    # media_db = MediaDb('../config')
+
+    # print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+
+    # desired_ids = [1,2,3,4,5]
+    # s = 'SELECT * FROM distro WHERE id IN (%s)' % ','.join('?'*len(desired_ids)), desired_ids
+    # print(s)
+
+    # douban = Douban(config)
+    # douban_ids = douban.get_douban_movies()
+    # logger.info(douban_ids)
+
+    # radarr = Radarr(config)
+    # rsp = radarr.lookup_movie_by_tmdb(278)
+    # logger.debug(rsp)
+
+    # sonarr = Sonarr(config)
+    # rsp = sonarr.get_series()
+    # logger.info(rsp)
+
+    # title = '西部世界 第十二季'
+    # pattern = r'[第\s]+([0-9一二三四五六七八九十S\-]+)\s*季'
+    # rst = re.search(r'%s' % pattern, title, re.I)
+    # logger.info(rst)
+    # logger.info(rst.group())
+    # logger.info(rst.group(0))
+    # logger.info(rst.group(1))
+    # season = rst.group(1)
+    # season = cn2an(inputs=season, mode='smart')
+    # logger.info(season)
+    # title = title.rstrip(rst.group(0))
+    # logger.info(title)
+    #
+    # c=3
+    # d = { 'a': 1, 'b': 2}
+    # d.update(c=c)
+    # logger.info(d)
+
+    # title = '大江大河22'
+    # pattern = r'(.*?)(\d+)'
+    # rst = re.search(r'%s' % pattern, title, re.I)
+    # logger.info(rst)
+    # logger.info(rst.group())
+    # logger.info(rst.group(0))
+    # logger.info(rst.group(1))
+    # season = rst.group(1)
+    # season = rst.group(2)
+    # print(season)
+    # logger.info(season)
+    # title = title.rstrip(rst.group(0))
+    # logger.info(title)

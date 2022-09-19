@@ -1,0 +1,22 @@
+- dns: aliyun
+  id: aa
+  secret: ss
+  domain: example.com
+  rr: test
+  ttl: 600
+  ip_ver: 4
+
+- dns: dnspod
+  id: aa
+  secret: ss
+  domain: example.com
+  rr: test
+  ttl: 600
+  ip_ver: 4
+
+- dns: cloudflare
+  token: tt
+  domain: example.com
+  rr: test
+  ttl: 600
+  ip_ver: 4
