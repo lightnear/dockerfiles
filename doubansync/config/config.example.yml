@@ -50,3 +50,8 @@ wechat:
   corpid: xxx
   secret: xxx
   agentid: 1000002
+
+schedule:
+  douban_top250: 1 # 每1小时
+  imdb_top250: 1 # 每1小时
+  douban: 10 # 每10分钟
