@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.7.0](https://github.com/lightnear/dockerfiles/compare/v1.6.3...v1.7.0) (2022-09-19)
+
+
+### Features
+
+* douban sync ([d7f52e5](https://github.com/lightnear/dockerfiles/commit/d7f52e59827c5cb9ecdb1c29b1cf159f86f3654e))
+* douban sync ([ed3ee27](https://github.com/lightnear/dockerfiles/commit/ed3ee27bf767b2f50ec74eb68c00cd30ef66353e))
+
+
+### Bug Fixes
+
+* doubansync ([5cd155f](https://github.com/lightnear/dockerfiles/commit/5cd155fd3109e6cd2ea61420d8ee8ecda2b461de))
+
 ### [1.6.3](https://github.com/lightnear/dockerfiles/compare/v1.6.2...v1.6.3) (2022-09-15)
 
 
