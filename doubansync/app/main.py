@@ -1,6 +1,8 @@
 # -*- coding: UTF-8 -*-
-import datetime
 import os
+import sys
+sys.path.append(os.path.abspath('..'))
+import datetime
 import schedule
 import time
 import logging
@@ -8,14 +10,14 @@ import logging.config
 import yaml
 import argparse
 
-from app.db import SqlHelper
-from app.douban import Douban, DoubanApi
-from app.emby import Emby
-from app.imdb import Imdb
-from app.radarr import Radarr
-from app.sonarr import Sonarr
-from app.tmdb import Tmdb
-from app.types import MediaType
+from db import SqlHelper
+from douban import Douban, DoubanApi
+from emby import Emby
+from imdb import Imdb
+from radarr import Radarr
+from sonarr import Sonarr
+from tmdb import Tmdb
+from utils import MediaType
 from wechat import Wechat
 
 log_config = {}
@@ -167,7 +169,6 @@ def run_douban(config) -> None:
     tmdb = Tmdb(config)
     douban_ids = douban.get_douban_movies()
     douban_ids_new = []
-    logger.debug(douban_ids)
 
     for douban_id in douban_ids:
         media = SqlHelper.select_media_by_douban(douban_id)
@@ -296,7 +297,7 @@ def sync_emby(config):
 # 运行
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='douban sync')
-    parser.add_argument('-c', '--config', default="../config/config.yml", help='config file')
+    parser.add_argument('-c', '--config', default="/config/config.yml", help='config file')
     args = parser.parse_args()
     config_file = args.config
     config = load_config(config_file)

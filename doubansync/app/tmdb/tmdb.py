@@ -4,7 +4,7 @@ import re
 import requests
 from cn2an import cn2an
 
-from app.types import MediaType
+from app.utils import MediaType
 from app.utils import RequestUtils
 
 try:

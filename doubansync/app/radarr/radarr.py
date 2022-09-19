@@ -4,7 +4,7 @@ import logging
 import requests
 
 from app.media import Media
-from app.types import MediaType
+from app.utils import MediaType
 from app.utils import RequestUtils
 
 

@@ -9,7 +9,7 @@ from requests.utils import dict_from_cookiejar
 
 from app.douban import DoubanApi
 from app.media import Media
-from app.types import MediaType
+from app.utils import MediaType
 from app.utils import RequestUtils
 
 

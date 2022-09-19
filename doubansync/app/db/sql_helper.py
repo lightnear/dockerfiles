@@ -1,6 +1,6 @@
 from app.db import DBHelper
 from app.media import Media
-from app.types import MediaType
+from app.utils import MediaType
 
 # from app.utils import StringUtils
 

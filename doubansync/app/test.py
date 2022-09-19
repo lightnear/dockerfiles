@@ -1,22 +1,13 @@
-import argparse
-import datetime
-import logging.config
 import os
-import random
-import re
-from time import sleep
+import sys
+sys.path.append(os.path.abspath('..'))
 
+import argparse
+import logging.config
 import yaml
-from cn2an import cn2an
-
-from app.db import MediaDb, SqlHelper
-from app.douban import DoubanApi, Douban
-from app.imdb import Imdb
-from app.media import Media
-from app.radarr import Radarr
-from app.sonarr import Sonarr
-from app.tmdb import Tmdb
-from app.types import MediaType
+from media import Media
+from tmdb import Tmdb
+from utils import MediaType
 
 log_config = {}
 with open("logging.yml", 'r') as r:
@@ -37,7 +28,7 @@ def load_config(config_path):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='douban sync')
-    parser.add_argument('-c', '--config', default="../config/config.yml", help='config file')
+    parser.add_argument('-c', '--config', default="/config/config.yml", help='config file')
     args = parser.parse_args()
     config_file = args.config
     config = load_config(config_file)
