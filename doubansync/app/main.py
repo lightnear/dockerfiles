@@ -11,7 +11,7 @@ import yaml
 import argparse
 
 from db import SqlHelper
-from douban import Douban, DoubanApi
+from douban import Douban
 from emby import Emby
 from imdb import Imdb
 from radarr import Radarr
@@ -173,7 +173,6 @@ def run_douban(config) -> None:
     douban = Douban(config)
     tmdb = Tmdb(config)
     douban_ids = douban.get_douban_movies()
-    douban_ids_new = []
 
     for douban_id in douban_ids:
         media = SqlHelper.select_media_by_douban(douban_id)
@@ -199,7 +198,6 @@ def run_douban(config) -> None:
             else:
                 media.status = 'wait'
                 SqlHelper.save_media(media)
-                douban_ids_new.append(media.douban_id)
                 logger.info(f'从豆瓣列表中找到新影视: {media.media_type.value} {media.title} {media.year}')
                 message += f'{media.media_type.value} {media.title} {media.year}\n'
 
@@ -224,6 +222,7 @@ def add_medias(config):
     sonarr = Sonarr(config)
     medias = SqlHelper.search_medias_by_status('wait')
     if not medias:
+        logger.info(f'没有媒体需要添加')
         return
     for media in medias:
         logger.info(f'开始添加 {media.media_type.value} {media.title} {media.year}')
@@ -279,6 +278,7 @@ def sync_emby(config):
     emby = Emby(config)
     medias = SqlHelper.search_medias_by_status('add')
     if not medias:
+        logger.info(f'没有媒体需要同步')
         return
     for media in medias:
         logger.info(f'同步媒体 {media.media_type.value} {media.title} {media.year}')
