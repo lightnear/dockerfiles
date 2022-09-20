@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.7.4](https://github.com/lightnear/dockerfiles/compare/v1.7.3...v1.7.4) (2022-09-20)
+
+
+### Bug Fixes
+
+* doubansync ddns 代码调整 ([8696b13](https://github.com/lightnear/dockerfiles/commit/8696b13348253a9a243aead87fa8100c2b04dec5))
+* doubansync fix ([96912ed](https://github.com/lightnear/dockerfiles/commit/96912edef0f6fa93e8f62051d9d0227b774bfc45))
+* doubansync fix ([c8a1508](https://github.com/lightnear/dockerfiles/commit/c8a1508dd20eda8e778a1e93311e136cb678308a))
+
 ### [1.7.3](https://github.com/lightnear/dockerfiles/compare/v1.7.2...v1.7.3) (2022-09-20)
 
 
