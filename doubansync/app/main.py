@@ -47,6 +47,9 @@ def douban_top250(config) -> None:
     douban = Douban(config)
     tmdb = Tmdb(config)
     douban_ids = douban.douban_top250()
+    if not douban_ids:
+        logger.info('未获取到 豆瓣 TOP250 列表')
+        return
     rank = 0
     for douban_id in douban_ids:
         rank += 1
@@ -112,6 +115,9 @@ def imdb_top250(config) -> None:
     imdb = Imdb(config)
     radarr = Radarr(config)
     imdb_ids = imdb.imdb_top250()
+    if not imdb_ids:
+        logger.info('未获取到 IMDB TOP250 列表')
+        return
     rank = 0
     for imdb_id in imdb_ids:
         rank += 1
@@ -164,10 +170,10 @@ def imdb_top250(config) -> None:
 def create_emby_playlist(config, name, emby_ids: list):
     emby = Emby(config)
     rsp = emby.search_playlist(name)
-    if rsp and rsp.get('TotalRecordCount') > 0:
+    if rsp and len(rsp.get('Items')) > 0:
         playlist_id = rsp.get('Items')[0]['Id']
         items = emby.get_playlist_items(playlist_id)
-        if items and items.get('TotalRecordCount') > 0:
+        if items and len(rsp.get('Items')) > 0:
             item_ids = [item.get('PlaylistItemId') for item in items.get('Items')]
             emby.remove_playlist_items(playlist_id, item_ids)
             emby.add_playlist_items(playlist_id, emby_ids)
@@ -181,7 +187,9 @@ def run_douban(config) -> None:
     douban = Douban(config)
     tmdb = Tmdb(config)
     douban_ids = douban.get_douban_movies()
-
+    if not douban_ids:
+        logger.info('没有新增的豆瓣内容')
+        return
     for douban_id in douban_ids:
         media = SqlHelper.select_media_by_douban(douban_id)
         if media:

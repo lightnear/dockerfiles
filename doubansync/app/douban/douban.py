@@ -98,7 +98,7 @@ class Douban(object):
         self.logger.info(f'豆瓣详情信息：{media_type.value} {media.title} {media.year}')
         return media
 
-    def douban_top250(self):
+    def douban_top250(self, retries=10):
         """
         获取豆瓣 TOP250电影信息
         :return: 检索到的媒体信息列表（不含TMDB信息）
@@ -107,9 +107,15 @@ class Douban(object):
         rsp = self.doubanapi.movie_top250()
         # 随机休眠
         sleep(round(random.uniform(3, 6), 1))
-        # self.logger.debug(rsp)
+        if not rsp and retries > 0:
+            self.logger.warning(f'获取豆瓣 TOP250 信息失败, 还将重试 {retries - 1} 次')
+            sleep(round(random.uniform(61, 70), 1))
+            douban_ids = self.douban_top250(retries - 1)
+
         if not rsp:
-            self.logger.warning('[DouBan] 获取豆瓣 TOP250信息失败')
+            self.logger.error('获取豆瓣 TOP250 信息失败')
+            return []
+
         for douban in rsp.get('subject_collection_items'):
             douban_id = douban.get('id')
             douban_ids.append(douban_id)

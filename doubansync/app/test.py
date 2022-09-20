@@ -11,6 +11,8 @@ from app.media import Media
 from app.tmdb import Tmdb
 from app.utils import MediaType
 from app.emby import Emby
+from app.imdb import Imdb
+from app.db import SqlHelper
 
 log_config = {}
 with open("logging.yml", 'r') as r:
@@ -171,9 +173,32 @@ if __name__ == '__main__':
 
     # fp = NamedTemporaryFile(mode='w', encoding='utf-8', suffix='.json', prefix='wechat', delete=False)
 
+    # emby = Emby(config)
+    # rsp = emby.search_playlist('IMDB TOP250')
+    # for pl in rsp.get('Items'):
+    #     playlist_id = pl.get('Id')
+    #     print(playlist_id)
+
+    # imdb = Imdb(config)
+    # imdb_ids = imdb.imdb_top250()
+    # print(imdb_ids)
+
+    # 从数据库查询最新的 豆瓣 TOP250 信息
+    medias = SqlHelper.select_douban_top250()
+    emby_ids = []
+    for media in medias:
+        if media.emby_id:
+            emby_ids.append(media.emby_id)
     emby = Emby(config)
     rsp = emby.search_playlist('IMDB TOP250')
-    for pl in rsp.get('Items'):
-        playlist_id = pl.get('Id')
-        print(playlist_id)
-
+    # logger.info(rsp)
+    if rsp and len(rsp.get('Items')) > 0:
+        playlist_id = rsp.get('Items')[0]['Id']
+        items = emby.get_playlist_items(playlist_id)
+        # logger.info(items)
+        if items and len(items.get('Items')) > 0:
+            item_ids = [item.get('PlaylistItemId') for item in items.get('Items')]
+            emby.remove_playlist_items(playlist_id, item_ids)
+            # emby.add_playlist_items(playlist_id, emby_ids)
+    else:
+        emby.create_playlist('豆瓣 TOP250', emby_ids)
