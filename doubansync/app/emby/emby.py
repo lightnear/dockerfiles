@@ -120,7 +120,7 @@ class Emby(object):
             'Fields': 'ProductionYear,ProviderIds,MediaType',
             'Recursive': True,
             'StartIndex': 0,
-            'Limit': 10,
+            'Limit': 100,
             'SearchTerm': name
         }
         rsp = self.requests.get(url, params)
@@ -140,15 +140,27 @@ class Emby(object):
         str_emby_ids = ','.join(str(emby_id) for emby_id in emby_ids)
         url = f'{self.host}/emby/Playlists/{playlist_id}/Items?Ids={str_emby_ids}'
         rsp = self.requests.post(url)
-        return rsp.json() if rsp else None
+        if rsp.status_code >= 200 and rsp.status_code < 300:
+            return True
+        else:
+            return None
 
     def remove_playlist_items(self, playlist_id, entry_ids):
+        url = f'{self.host}/emby/Playlists/{playlist_id}/Items'
         entry_ids = ','.join(str(entry_id) for entry_id in entry_ids)
-        url = f'{self.host}/emby/Playlists/{playlist_id}/Items?EntryIds={entry_ids}'
-        rsp = self.requests.request('DELETE', url)
-        return rsp.json() if rsp else None
+        params = {
+            'EntryIds': entry_ids
+        }
+        rsp = self.requests.request('DELETE', url, params=params)
+        if rsp.status_code >= 200 and rsp.status_code < 300:
+            return True
+        else:
+            return None
 
     def move_playlist_item(self, playlist_id, item_id, new_index):
         url = f'{self.host}/emby/Playlists/{playlist_id}/Items/{item_id}/Move/{new_index}'
         rsp = self.requests.post(url)
-        return rsp.json() if rsp else None
+        if rsp.status_code >= 200 and rsp.status_code < 300:
+            return True
+        else:
+            return None

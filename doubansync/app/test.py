@@ -10,8 +10,7 @@ import yaml
 from app.media import Media
 from app.tmdb import Tmdb
 from app.utils import MediaType
-import tempfile
-from tempfile import TemporaryFile, TemporaryDirectory, NamedTemporaryFile
+from app.emby import Emby
 
 log_config = {}
 with open("logging.yml", 'r') as r:
@@ -23,7 +22,7 @@ logger = logging.getLogger(__name__)
 # 加载配置文件
 def load_config(config_path):
     try:
-        with open(config_path, 'r') as r:
+        with open(config_path, 'r', encoding='utf-8') as r:
             config = yaml.safe_load(r)
         return config
     except Exception as e:
@@ -171,4 +170,10 @@ if __name__ == '__main__':
     #     time.sleep(1)
 
     # fp = NamedTemporaryFile(mode='w', encoding='utf-8', suffix='.json', prefix='wechat', delete=False)
-    print(tempfile.gettempdir())
+
+    emby = Emby(config)
+    rsp = emby.search_playlist('IMDB TOP250')
+    for pl in rsp.get('Items'):
+        playlist_id = pl.get('Id')
+        print(playlist_id)
+
