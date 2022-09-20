@@ -322,8 +322,8 @@ if __name__ == '__main__':
     sync_emby(config)
 
     schedule.every(config.get('schedule').get('douban')).minutes.do(run_douban, config)  # 每小时同步一次 豆瓣想看列表
-    schedule.every(10).minutes.do(add_medias, config)  # 每10min同步一次 添加至PMR
-    schedule.every(10).minutes.do(sync_emby, config)   # 每10min同步一次 同步EMBY
+    schedule.every(config.get('schedule').get('sync')).minutes.do(add_medias, config)  # 每10min同步一次 添加至PMR
+    schedule.every(config.get('schedule').get('sync')).minutes.do(sync_emby, config)   # 每10min同步一次 同步EMBY
     schedule.every(config.get('schedule').get('imdb_top250')).hours.at(':15').do(imdb_top250, config)  # IMDB TOP250
     schedule.every(config.get('schedule').get('douban_top250')).hours.at(':45').do(douban_top250, config)  # 豆瓣 TOP250
     while True:

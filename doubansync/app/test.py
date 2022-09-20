@@ -1,5 +1,9 @@
 import os
 import sys
+import time
+
+import schedule
+
 sys.path.append(os.path.abspath('..'))
 
 import argparse
@@ -26,9 +30,14 @@ def load_config(config_path):
         logger.error(e)
         return []
 
+
+def run_job(name):
+    logger.info(name)
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='douban sync')
-    parser.add_argument('-c', '--config', default="/config/config.yml", help='config file')
+    parser.add_argument('-c', '--config', default="../config/config.yml", help='config file')
     args = parser.parse_args()
     config_file = args.config
     config = load_config(config_file)
@@ -77,13 +86,13 @@ if __name__ == '__main__':
     # media = douban.get_media_detail_from_web("https://movie.douban.com/subject/34477861/")
     # print(media)
 
-    tmdb = Tmdb(config)
-    media = Media()
-    media.title = '大江大河2'
-    media.year = 2020
-    media.media_type = MediaType.TV
-    x = tmdb.match_tmdb(media)
-    logger.info(x)
+    # tmdb = Tmdb(config)
+    # media = Media()
+    # media.title = '大江大河2'
+    # media.year = 2020
+    # media.media_type = MediaType.TV
+    # x = tmdb.match_tmdb(media)
+    # logger.info(x)
 
     # rsp = tmdb.movie_detail(278)
     # logger.info(rsp)
@@ -155,3 +164,10 @@ if __name__ == '__main__':
     # logger.info(season)
     # title = title.rstrip(rst.group(0))
     # logger.info(title)
+
+    schedule.every(2).minutes.at(':10').do(run_job, 'xxx')
+    schedule.every(2).minutes.at(':20').do(run_job, 'zzz')
+
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
