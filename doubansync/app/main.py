@@ -226,10 +226,12 @@ def add_medias(config):
     if not medias:
         return
     for media in medias:
-        if media.status == 'wait' and media.media_type == MediaType.MOVIE and media.tmdb_id:
+        logger.info(f'开始添加 {media.media_type.value} {media.title} {media.year}')
+        if media.media_type == MediaType.MOVIE and media.tmdb_id:
             if radarr.get_movie_by_tmdb(media.tmdb_id):
                 media.status = 'add'
                 SqlHelper.update_media(media)
+                logger.info(f'电影在PMR中已存在：{media.media_type.value} {media.title} {media.year}')
             else:
                 rsp = radarr.add_movie(media)
                 if rsp:
@@ -240,12 +242,13 @@ def add_medias(config):
                 else:
                     logger.info(f'添加电影失败：{media.media_type.value} {media.title} {media.year}')
                     message += f'失败: {media.media_type.value} {media.title} {media.year}\n'
-        if media.status == 'wait' and media.media_type == MediaType.TV and media.tvdb_id:
+        if media.media_type == MediaType.TV and media.tvdb_id:
             sonarr_series = sonarr.get_series()
             sonarr_series_ids = [series.get('tvdbId') for series in sonarr_series]
             if media.tvdb_id in sonarr_series_ids:
                 media.status = 'add'
                 SqlHelper.update_media(media)
+                logger.info(f'电视剧在PMR中已存在：{media.media_type.value} {media.title} {media.year}')
             else:
                 rsp = sonarr.add_series(media)
                 if rsp:
@@ -278,24 +281,22 @@ def sync_emby(config):
     if not medias:
         return
     for media in medias:
-        if media.status == 'add' and media.media_type == MediaType.MOVIE:
+        logger.info(f'同步媒体 {media.media_type.value} {media.title} {media.year}')
+        if media.media_type == MediaType.MOVIE:
             emby_item = emby.search_movie_by_tmdb(media.tmdb_id)
-            if emby_item and emby_item.get('TotalRecordCount') > 0:
-                media.emby_id = emby_item.get('Items')[0]['Id']
-                media.status = 'finish'
-                media.sync_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                SqlHelper.update_media(media)
-                logger.info(f'媒体库有新的影视剧，可以看了: {media.media_type.value} {media.title} {media.year}')
-                message += f'{media.media_type.value} {media.title} {media.year}\n'
-        if media.status == 'add' and media.media_type == MediaType.TV:
+        if media.media_type == MediaType.TV:
             emby_item = emby.search_series_by_tvdb(media.tvdb_id)
-            if emby_item and emby_item.get('TotalRecordCount') > 0:
-                media.emby_id = emby_item.get('Items')[0]['Id']
-                media.status = 'finish'
-                media.sync_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                SqlHelper.update_media(media)
-                logger.info(f'媒体库有新的影视剧，可以看了: {media.media_type.value} {media.title} {media.year}')
-                message += f'{media.media_type.value} {media.title} {media.year}\n'
+
+        if emby_item and emby_item.get('TotalRecordCount') > 0:
+            media.emby_id = emby_item.get('Items')[0]['Id']
+            media.status = 'finish'
+            media.sync_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            SqlHelper.update_media(media)
+            logger.info(f'媒体库有新的影视剧，可以看了: {media.media_type.value} {media.title} {media.year}')
+            message += f'{media.media_type.value} {media.title} {media.year}\n'
+        else:
+            logger.info(f'媒体尚未下载完成 {media.media_type.value} {media.title} {media.year}')
+
     # 发送消息
     if message:
         wechat = Wechat(config)
