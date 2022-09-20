@@ -1,23 +1,24 @@
 import os
 import sys
-import time
-
-import schedule
 
 sys.path.append(os.path.abspath('..'))
-
+import time
+import schedule
 import argparse
 import logging.config
 import yaml
-from media import Media
-from tmdb import Tmdb
-from utils import MediaType
+from app.media import Media
+from app.tmdb import Tmdb
+from app.utils import MediaType
+import tempfile
+from tempfile import TemporaryFile, TemporaryDirectory, NamedTemporaryFile
 
 log_config = {}
 with open("logging.yml", 'r') as r:
     log_config = yaml.safe_load(r)
 logging.config.dictConfig(log_config)
 logger = logging.getLogger(__name__)
+
 
 # 加载配置文件
 def load_config(config_path):
@@ -44,8 +45,6 @@ if __name__ == '__main__':
     config_path, _ = os.path.split(config_file)
     os.environ['DB_CONFIG_PATH'] = os.path.abspath(config_path)
     # logger.debug(config)
-
-
 
     # doubanApi = DoubanApi()
     # rsp = doubanApi.movie_detail(35460157)
@@ -75,7 +74,6 @@ if __name__ == '__main__':
     #         print(detail['type'])
     #     i += 1
     #     print(item)
-
 
     # douban = Douban(config)
     # media_list = douban.get_douban_movies()
@@ -165,9 +163,12 @@ if __name__ == '__main__':
     # title = title.rstrip(rst.group(0))
     # logger.info(title)
 
-    schedule.every(2).minutes.at(':10').do(run_job, 'xxx')
-    schedule.every(2).minutes.at(':20').do(run_job, 'zzz')
+    # schedule.every(2).minutes.at(':10').do(run_job, 'xxx')
+    # schedule.every(2).minutes.at(':20').do(run_job, 'zzz')
 
-    while True:
-        schedule.run_pending()
-        time.sleep(1)
+    # while True:
+    #     schedule.run_pending()
+    #     time.sleep(1)
+
+    # fp = NamedTemporaryFile(mode='w', encoding='utf-8', suffix='.json', prefix='wechat', delete=False)
+    print(tempfile.gettempdir())

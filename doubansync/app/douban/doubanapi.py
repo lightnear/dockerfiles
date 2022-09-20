@@ -54,7 +54,6 @@ class DoubanApi(object):
         requests_cache.install_cache(backend='memory')
         requests_cache.clear()
         self.requests = RequestUtils(headers=self.headers, session=requests.Session())
-        self.max_retries = 10
 
     # def get_sig(self, url: str, ts: int, method='GET') -> str:
     #     """

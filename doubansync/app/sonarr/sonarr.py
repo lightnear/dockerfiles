@@ -55,7 +55,7 @@ class Sonarr(object):
 
     def add_series(self, media, rootFolderPath=None, qualityProfileId=None, monitored=None, seasonFolder=None):
         tvdb_id = media.tvdb_id
-        imdb_id = media.imdb_id
+        # imdb_id = media.imdb_id
         title = media.title
         year = media.year
 

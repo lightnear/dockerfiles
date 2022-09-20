@@ -1,6 +1,5 @@
 # -*- coding: UTF-8 -*-
 import os
-import json
 import schedule
 import time
 import requests
@@ -32,44 +31,51 @@ def load_config(config_path):
 
 
 # 获取IP地址，支持v4与v6
-def get_public_ip(ip_ver: int) -> str:
-    ip_addr = ""
+def get_public_ip(ip_ver: int, retries: int = 3) -> str:
+    ip_addr = None
     ipv4_urls = ["http://whatismyip.akamai.com", "http://4.ipw.cn", "https://v4.ident.me/"]
     ipv6_urls = ["http://6.ipw.cn", "https://v6.ident.me/"]
     if ip_ver == 4:
         for url in ipv4_urls:
-            fail_count = 0
-            while fail_count < 3:
-                try:
-                    resp = requests.get(url, timeout=10)
-                    ip_addr = resp.content.decode().strip('\n')
-                    return ip_addr
-                except Exception as e:
-                    logger.error(e)
-                    fail_count += 1
-                    time.sleep(1)
-                    pass
+            try:
+                resp = requests.get(url, timeout=10)
+                if resp.status_code != 200:
+                    logger.warning(f'从 {url} 获取 IPv{ip_ver} 地址失败: status_code: {resp.status_code}')
+                    continue
+                ip_addr = resp.content.decode().strip('\n')
+                logger.info(f'从 {url} 获取 IPv{ip_ver} 地址成功: {ip_addr}')
+                break
+            except Exception as e:
+                logger.warning(f'从 {url} 获取 IPv{ip_ver} 地址失败: {str(e)}')
+                time.sleep(1)
     elif ip_ver == 6:
         for url in ipv6_urls:
-            fail_count = 0
-            while fail_count < 3:
-                try:
-                    resp = requests.get(url, timeout=10)
-                    ip_addr = resp.content.decode().strip('\n')
-                    return ip_addr
-                except Exception as e:
-                    logger.error(e)
-                    fail_count += 1
-                    time.sleep(1)
-                    pass
-    raise Exception(f"获取IP版本{ip_ver}地址失败")
+            try:
+                resp = requests.get(url, timeout=10)
+                if resp.status_code != 200:
+                    logger.warning(f'从 {url} 获取 IPv{ip_ver} 地址失败: status_code: {resp.status_code}')
+                    continue
+                ip_addr = resp.content.decode().strip('\n')
+                logger.info(f'从 {url} 获取 IPv{ip_ver} 地址成功: {ip_addr}')
+                break
+            except Exception as e:
+                logger.warning(f'从 {url} 获取 IPv{ip_ver} 地址失败: {str(e)}')
+                time.sleep(1)
+    if not ip_addr and retries > 0:
+        ip_addr = get_public_ip(ip_ver, retries - 1)
+    if ip_addr:
+        return ip_addr
+    else:
+        logger.error(f"获取 IPv{ip_ver} 地址失败，已尝试3次")
+        raise Exception(f"获取 IPv{ip_ver} 地址失败，已尝试3次")
 
 
-def run_ddns(config_path) -> None:
-    config_json = load_config(config_path)
+def run_ddns(config) -> None:
+    ddns = config.get('ddns')
     message = ""
-    if (len(config_json) > 0):
-        for v in config_json:
+    if (len(ddns) > 0):
+        for v in ddns:
+            time.sleep(1)
             dns = v['dns']
             if dns == 'aliyun':
                 id = v['id']
@@ -125,9 +131,10 @@ if __name__ == '__main__':
     parser.add_argument('-c', '--config', default="/config/config.yml", help='config file')
     args = parser.parse_args()
     config_path = args.config
+    config = load_config(config_path)
 
-    run_ddns(config_path)
-    schedule.every(60).seconds.do(run_ddns, config_path)  # 每60秒执行一次
+    run_ddns(config)
+    schedule.every(60).seconds.do(run_ddns, config)  # 每60秒执行一次
     while True:
         schedule.run_pending()
         time.sleep(1)

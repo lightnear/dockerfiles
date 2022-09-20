@@ -46,52 +46,44 @@ class Douban(object):
                 if rsp:
                     cookie = dict_from_cookiejar(rsp.cookies)
             except Exception as err:
-                self.logger.warning(f"[DouBan] 获取cookie失败：{format(err)}")
+                self.logger.warning(f"获取cookie失败：{format(err)}")
         self.requests = RequestUtils(cookies=cookie, session=requests.Session())
         self.doubanapi = DoubanApi()
 
-    def douban2media(self, douban_id):
+    def get_douban_info(self, douban_id, retries=10):
         """
         查询豆瓣详情，并组装媒体信息
         :param douban_ids:
         :return:
         """
         # 查询豆瓣详情
-        self.logger.info(f'[DouBan] 正在查询豆瓣详情：{douban_id}')
-        get_from_web = False
-        max_retries = 10
-        fail_count = 0
-        while fail_count < max_retries:
-            douban_info = self.doubanapi.movie_detail(douban_id)
+        self.logger.info(f'正在查询豆瓣详情：{douban_id}')
+
+        # 尝试按电影类型获取豆瓣详情
+        douban_info = self.doubanapi.movie_detail(douban_id)
+        # 随机休眠
+        sleep(round(random.uniform(3, 6), 1))
+        if not douban_info:
+            # 尝试按电视剧类型获取豆瓣详情
+            douban_info = self.doubanapi.tv_detail(douban_id)
             # 随机休眠
             sleep(round(random.uniform(3, 6), 1))
-            if not douban_info:
-                douban_info = self.doubanapi.tv_detail(douban_id)
-                # 随机休眠
-                sleep(round(random.uniform(3, 6), 1))
-            if not douban_info:
-                fail_count += 1
-                self.logger.warning(f'第{fail_count}次获取豆瓣信息失败，将重试，最多10次')
-                # 随机休眠
-                sleep(round(random.uniform(60, 70), 1))
-                continue
-            break
-        if not douban_info:
-            self.logger.warning(f'[DouBan] %s 未从API找到豆瓣详细信息 {douban_id}, 尝试从web获取')
-            get_from_web = True
-        if douban_info.get("localized_message"):
-            localized_message = douban_info.get("localized_message")
-            self.logger.warning(f'[DouBan] 查询豆瓣详情返回：{localized_message}， 尝试从web获取')
-            get_from_web = True
-        if get_from_web:
-            douban_info = self.media_detail_from_web(f'https://movie.douban.com/subject/{douban_id}/')
+
+        if not douban_info and retries > 0:
+            self.logger.warning(f'获取豆瓣信息失败，还将重试{retries-1}次')
             # 随机休眠
-            sleep(round(random.uniform(3, 6), 1))
-            if not douban_info:
-                self.logger.warning(f'[DouBan] %s 无权限访问，需要配置豆瓣Cookie {douban_id}')
+            sleep(round(random.uniform(60, 70), 1))
+            douban_info = self.get_douban_info(douban_id, retries - 1)
+
+        if douban_info:
+            return douban_info
+        else:
+            self.logger.warning(f'未找到豆瓣详情 {douban_id}')
+            return None
+
+    def douban2media(self, douban_info):
         if not douban_info:
-            self.logger.warning(f'[DouBan] %s 未找到豆瓣详细信息 {douban_id}')
-            return
+            return None
         # 组装媒体信息
         if douban_info.get('type'):
             media_type = MediaType.TV if douban_info.get('type') == 'tv' else MediaType.MOVIE
@@ -100,10 +92,10 @@ class Douban(object):
         media = Media()
         media.title = douban_info.get('title')
         media.year = douban_info.get('year')
-        media.douban_id = douban_id
+        media.douban_id = douban_info.get('id')
         media.media_type = media_type
-        media.status = 'new'
-        self.logger.info(f'[DouBan] {media_type.value}：{media.title} {media.year}'.strip())
+        media.status = 'wait'
+        self.logger.info(f'豆瓣详情信息：{media_type.value} {media.title} {media.year}')
         return media
 
     def douban_top250(self):
@@ -230,29 +222,29 @@ class Douban(object):
         sleep(round(random.uniform(3, 6), 1))
         return douban_ids
 
-    def media_detail_from_web(self, url):
-        """
-        从豆瓣详情页抓紧媒体信息
-        :param url: 豆瓣详情页URL
-        :return: {title, year, intro, cover_url, rating{value}, episodes_count}
-        """
-        ret_media = {}
-        rsp = self.requests.get(url=url)
-        if rsp and rsp.status_code == 200:
-            html_text = rsp.text
-            if not html_text:
-                return None
-            try:
-                html = etree.HTML(html_text)
-                ret_media['title'] = html.xpath("//span[@property='v:itemreviewed']/text()")[0]
-                if not ret_media.get('title'):
-                    return None
-                ret_media['year'] = html.xpath("//div[@id='content']//span[@class='year']/text()")[0][1:-1]
-                detail_info = html.xpath("//div[@id='info']/text()")
-                if isinstance(detail_info, list):
-                    detail_info = [str(x).strip() for x in detail_info if str(x).strip().isdigit()]
-                    if detail_info and str(detail_info[0]).isdigit():
-                        ret_media['episodes_count'] = int(detail_info[0])
-            except Exception as err:
-                print(err)
-        return ret_media
+    # def media_detail_from_web(self, url):
+    #     """
+    #     从豆瓣详情页抓紧媒体信息
+    #     :param url: 豆瓣详情页URL
+    #     :return: {title, year, intro, cover_url, rating{value}, episodes_count}
+    #     """
+    #     ret_media = {}
+    #     rsp = self.requests.get(url=url)
+    #     if rsp and rsp.status_code == 200:
+    #         html_text = rsp.text
+    #         if not html_text:
+    #             return None
+    #         try:
+    #             html = etree.HTML(html_text)
+    #             ret_media['title'] = html.xpath("//span[@property='v:itemreviewed']/text()")[0]
+    #             if not ret_media.get('title'):
+    #                 return None
+    #             ret_media['year'] = html.xpath("//div[@id='content']//span[@class='year']/text()")[0][1:-1]
+    #             detail_info = html.xpath("//div[@id='info']/text()")
+    #             if isinstance(detail_info, list):
+    #                 detail_info = [str(x).strip() for x in detail_info if str(x).strip().isdigit()]
+    #                 if detail_info and str(detail_info[0]).isdigit():
+    #                     ret_media['episodes_count'] = int(detail_info[0])
+    #         except Exception as err:
+    #             print(err)
+    #     return ret_media

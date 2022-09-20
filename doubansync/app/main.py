@@ -1,7 +1,6 @@
 # -*- coding: UTF-8 -*-
 import os
 import sys
-sys.path.append(os.path.abspath('..'))
 import datetime
 import schedule
 import time
@@ -10,15 +9,17 @@ import logging.config
 import yaml
 import argparse
 
-from db import SqlHelper
-from douban import Douban
-from emby import Emby
-from imdb import Imdb
-from radarr import Radarr
-from sonarr import Sonarr
-from tmdb import Tmdb
-from utils import MediaType
-from wechat import Wechat
+sys.path.append(os.path.abspath('..'))
+
+from app.db import SqlHelper
+from app.douban import Douban
+from app.emby import Emby
+from app.imdb import Imdb
+from app.radarr import Radarr
+from app.sonarr import Sonarr
+from app.tmdb import Tmdb
+from app.utils import MediaType
+from app.wechat import Wechat
 
 log_config = {}
 with open("logging.yml", 'r') as r:
@@ -30,7 +31,7 @@ logger = logging.getLogger(__name__)
 # 加载配置文件
 def load_config(config_path):
     try:
-        with open(config_path, 'r') as r:
+        with open(config_path, 'r', encoding='utf-8') as r:
             config = yaml.safe_load(r)
         return config
     except Exception as e:
@@ -55,8 +56,15 @@ def douban_top250(config) -> None:
             media.update_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             SqlHelper.update_media(media)
         else:
-            media = douban.douban2media(douban_id)
+            douban_info = douban.get_douban_info(douban_id)
+            if not douban_info:
+                logger.warning(f'未找到豆瓣详情 {douban_id}')
+                continue
+            media = douban.douban2media(douban_info)
             media = tmdb.match_tmdb(media)
+            if not media:
+                logger.warning(f'未匹配到TMDB信息 {media.media_type.value} {media.title} {media.year}')
+                continue
             if media.tmdb_id:
                 db_media = SqlHelper.select_media_by_tmdb(media.tmdb_id)
             elif media.tvdb_id:
@@ -84,7 +92,6 @@ def douban_top250(config) -> None:
     for media in medias:
         if media.emby_id:
             emby_ids.append(media.emby_id)
-    logger.debug(emby_ids)
 
     # 创建 emby 播放列表
     create_emby_playlist(config, '豆瓣 TOP250', emby_ids)
@@ -153,6 +160,7 @@ def imdb_top250(config) -> None:
         wechat.send_message(subject, message, to)
     logger.info('完成同步IMDB TOP250')
 
+
 def create_emby_playlist(config, name, emby_ids: list):
     emby = Emby(config)
     rsp = emby.search_playlist(name)
@@ -181,8 +189,15 @@ def run_douban(config) -> None:
             SqlHelper.update_media(media)
             logger.info(f'数据库中已存在影视: {media.media_type.value} {media.title} {media.year}')
         else:
-            media = douban.douban2media(douban_id)
+            douban_info = douban.get_douban_info(douban_id)
+            if not douban_info:
+                logger.warning(f'未找到豆瓣详情 {douban_id}')
+                continue
+            media = douban.douban2media(douban_info)
             media = tmdb.match_tmdb(media)
+            if not media:
+                logger.warning(f'未匹配到TMDB信息 {media.media_type.value} {media.title} {media.year}')
+                continue
             if media.tmdb_id:
                 db_media = SqlHelper.select_media_by_tmdb(media.tmdb_id)
             elif media.tvdb_id:
@@ -222,7 +237,7 @@ def add_medias(config):
     sonarr = Sonarr(config)
     medias = SqlHelper.search_medias_by_status('wait')
     if not medias:
-        logger.info(f'没有媒体需要添加')
+        logger.info('没有媒体需要添加')
         return
     for media in medias:
         logger.info(f'开始添加 {media.media_type.value} {media.title} {media.year}')
@@ -236,7 +251,7 @@ def add_medias(config):
                 if rsp:
                     media.status = 'add'
                     SqlHelper.update_media(media)
-                    logger.info(f'添加电影，将自动搜索下载：{media.media_type.value} {media.title} {media.year}')
+                    logger.info(f'添加电影成功，将自动搜索下载：{media.media_type.value} {media.title} {media.year}')
                     message += f'成功：{media.media_type.value} {media.title} {media.year}\n'
                 else:
                     logger.info(f'添加电影失败：{media.media_type.value} {media.title} {media.year}')
@@ -253,7 +268,7 @@ def add_medias(config):
                 if rsp:
                     media.status = 'add'
                     SqlHelper.update_media(media)
-                    logger.info(f'添加电视剧，将自动搜索下载：{media.media_type.value} {media.title} {media.year}')
+                    logger.info(f'添加电视剧成功，将自动搜索下载：{media.media_type.value} {media.title} {media.year}')
                     message += f'成功：{media.media_type.value} {media.title} {media.year}\n'
                 else:
                     logger.info(f'添加电视剧失败：{media.media_type.value} {media.title} {media.year}')
@@ -278,7 +293,7 @@ def sync_emby(config):
     emby = Emby(config)
     medias = SqlHelper.search_medias_by_status('add')
     if not medias:
-        logger.info(f'没有媒体需要同步')
+        logger.info('没有媒体需要同步')
         return
     for media in medias:
         logger.info(f'同步媒体 {media.media_type.value} {media.title} {media.year}')

@@ -1,11 +1,12 @@
 import datetime
+from app.utils import MediaType
 
 
 class Media(object):
     id: int = None
     title: str = None
     year: int = None
-    media_type: str = None
+    media_type: MediaType = None
     douban_id: int = None
     tmdb_id: int = None
     imdb_id: str = None
