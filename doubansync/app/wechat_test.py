@@ -52,7 +52,7 @@ if __name__ == '__main__':
     wechat.send_video(r'C:\Users\lightnear\Downloads\11.mp4', touser='lightnear')
     wechat.upload_forever_image(r'C:\Users\lightnear\Downloads\11.jpg')
     wechat.send_textcard('新的起点',
-                             '''监控ID:47218
+                         '''监控ID:47218
     告警主机:pf.faye.cool
     告警主机:10.1.1.1
     告警时间:2022.09.21 05:10:04
@@ -62,19 +62,21 @@ if __name__ == '__main__':
     问题详情:PFSense: Interface [pppoe0(WAN)]: Operational status:dormant (5)
     当前状态:OK:dormant (5)
     事件ID:180790''',
-                             'https://dataworld.fun',
-                             touser='lightnear')
+                         'https://dataworld.fun',
+                         touser='lightnear')
 
-    wechat.send_news('父母爱情',
-                     r'要放在解放前，江德福（郭涛 饰）和安杰（梅婷 饰）这对男女可真是八竿子够不上关系的两个人。他们一个是年轻有为、干练果敢的海军军官，一个是从小养尊处优、娇媚华贵的资本家小姐，但20世纪50年代的沧桑巨变让他们俩人走到了一起。江德福在舞会上结识美丽的安杰，虽然他冒冒失失，又 是个目不识丁的大老粗，经过一番周折他们终于组建了成分不相匹配的小家庭。问题是不相匹配的何止是出身，还有各自的阅历、学历以及人生态度，在之后的岁月里，他们打打闹闹，吵架拌嘴，俨然成了家庭常态，更有江德华（刘琳 饰）这类人物从中加油添醋。',
-                     'https://movie.douban.com/subject/19965220/?_dtcc=1',
-                     'https://img1.doubanio.com/view/photo/s_ratio_poster/public/p2554351588.webp',
-                     touser='lightnear')
+    wechat.send_news(
+        '父母爱情',
+        r'要放在解放前，江德福（郭涛 饰）和安杰（梅婷 饰）这对男女可真是八竿子够不上关系的两个人。他们一个是年轻有为、干练果敢的海军军官，一个是从小养尊处优、娇媚华贵的资本家小姐，但20世纪50年代的沧桑巨变让他们俩人走到了一起。江德福在舞会上结识美丽的安杰，虽然他冒冒失失，又 是个目不识丁的大老粗，经过一番周折他们终于组建了成分不相匹配的小家庭。问题是不相匹配的何止是出身，还有各自的阅历、学历以及人生态度，在之后的岁月里，他们打打闹闹，吵架拌嘴，俨然成了家庭常态，更有江德华（刘琳 饰）这类人物从中加油添醋。',
+        'https://movie.douban.com/subject/19965220/?_dtcc=1',
+        'https://img1.doubanio.com/view/photo/s_ratio_poster/public/p2554351588.webp',
+        touser='lightnear')
 
     wechat.send_mpnews(
         '父母爱情',
-        r'要放在解放前，江德福（郭涛 饰）和安杰（梅婷 饰）这对男女可真是八竿子够不上关系的两个人。他们一个是年轻有为、干练果敢的海军军官，一个是从小养尊处优、娇媚华贵的资本家小姐，但20世纪50年代的沧桑巨变让他们俩人走到了一起。江德福在舞会上结识美丽的安杰，虽然他冒冒失失，又 是个目不识丁的大老粗，经过一番周折他们终于组建了成分不相匹配的小家庭。问题是不相匹配的何止是出身，还有各自的阅历、学历以及人生态度，在之后的岁月里，他们打打闹闹，吵架拌嘴，俨然成了家庭常态，更有江德华（刘琳 饰）这类人物从中加油添醋。',
         '32MBOnSwDPnUb3IKTCTOuFEAiwCW5FzE42mKNAalGeiWwPbuZygN3MVnW7x-dDVPI',
+        'lightnear',
+        'https://www.dataworld.fun',
         """
         <div style="text-align: center;">
         <img src='https://img1.doubanio.com/view/photo/s_ratio_poster/public/p2554351588.webp'>
@@ -88,11 +90,8 @@ if __name__ == '__main__':
 要放在解放前，江德福（郭涛 饰）和安杰（梅婷 饰）这对男女可真是八竿子够不上关系的两个人。他们一个是年轻有为、干练果敢的海军军官，一个是从小养尊处优、娇媚华贵的资本家小姐，但20世纪50年代的沧桑巨变让他们俩人走到了一起。江德福在舞会上结识美丽的安杰，虽然他冒冒失失，又 是个目不识丁的大老粗，经过一番周折他们终于组建了成分不相匹配的小家庭。问题是不相匹配的何止是出身，还有各自的阅历、学历以及人生态度，在之后的岁月里，他们打打闹闹，吵架拌嘴，俨然成了家庭常态，更有江德华（刘琳 饰）这类人物从中加油添醋。<br>这是父辈们平常而又有些特殊的典型案例，将他们紧紧锁在一起的不仅仅是爱情，更有……
 </section>
 """,
+        r'要放在解放前，江德福（郭涛 饰）和安杰（梅婷 饰）这对男女可真是八竿子够不上关系的两个人。他们一个是年轻有为、干练果敢的海军军官，一个是从小养尊处优、娇媚华贵的资本家小姐，但20世纪50年代的沧桑巨变让他们俩人走到了一起。江德福在舞会上结识美丽的安杰，虽然他冒冒失失，又 是个目不识丁的大老粗，经过一番周折他们终于组建了成分不相匹配的小家庭。问题是不相匹配的何止是出身，还有各自的阅历、学历以及人生态度，在之后的岁月里，他们打打闹闹，吵架拌嘴，俨然成了家庭常态，更有江德华（刘琳 饰）这类人物从中加油添醋。',
         touser='lightnear')
-
-
-
-
 """
         <div style="text-align: center;">
         <img src='https://img1.doubanio.com/view/photo/s_ratio_poster/public/p2554351588.webp'>
