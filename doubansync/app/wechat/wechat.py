@@ -176,7 +176,7 @@ class Wechat(WeChatApi):
         :param kwargs: 其它参数
         :return:
         """
-        message = {'title': title, 'description': desc, 'url': url, 'btntxt': btn}
+        message = {'title': title, 'description': desc, 'url': url, 'btntxt': btntxt}
         self.handler.send_message('textcard', message, touser, toparty, totag, safe, enable_duplicate_check,
                                   duplicate_check_interval, **kwargs)
 
