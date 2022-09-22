@@ -66,10 +66,5 @@ class WeChatApi(ABC):
     #     pass
 
     @abstractmethod
-    def upload_p_image(self, *args, **kwargs):
-        """
-        上传图片得到图片URL，该URL永久有效
-        返回的图片URL，仅能用于图文消息正文中的图片展示，或者给客户发送欢迎语等；若用于非企业微信环境下的页面，图片将被屏蔽。
-        每个企业每月最多可上传3000张图片，每天最多可上传1000张图片
-        """
+    def upload_forever_image(self, *args, **kwargs):
         pass
