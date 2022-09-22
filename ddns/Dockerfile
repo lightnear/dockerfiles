@@ -10,8 +10,6 @@ RUN pip install --upgrade pip setuptools; \
   pip install --no-cache-dir requests schedule; \
   pip install --no-cache-dir pyyaml;
 
-COPY app/ /app/
-
 WORKDIR /app
 
 VOLUME [ "/config" ]

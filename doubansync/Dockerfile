@@ -10,8 +10,6 @@ RUN pip install --upgrade pip setuptools; \
   pip install --no-cache-dir requests requests-cache schedule; \
   pip install --no-cache-dir pyyaml lxml cn2an aiohttp bs4;
 
-COPY app/ /app/
-
 WORKDIR /app
 
 VOLUME [ "/config" ]
