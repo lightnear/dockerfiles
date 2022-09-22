@@ -4,11 +4,13 @@ from app.utils import MediaType
 
 class Media(object):
     id: int = None
-    title: str = None
-    year: int = None
     media_type: MediaType = None
     douban_id: int = None
+    douban_title: str = None
+    douban_year: str = None
     tmdb_id: int = None
+    tmdb_title: str = None
+    tmdb_year: int = None
     imdb_id: str = None
     tvdb_id: int = None
     emby_id: int = None

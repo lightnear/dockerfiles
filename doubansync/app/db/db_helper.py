@@ -36,7 +36,7 @@ class DBHelper:
         try:
             # 媒体信息表
             sql = '''
-            create table media
+            create table if not exists media
             (
                 id            INTEGER not null
                     primary key autoincrement,

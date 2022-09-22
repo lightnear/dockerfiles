@@ -14,6 +14,8 @@ from app.emby import Emby
 from app.imdb import Imdb
 from app.db import SqlHelper
 
+from app.wechat import Wechat
+
 log_config = {}
 with open("logging.yml", 'r') as r:
     log_config = yaml.safe_load(r)
@@ -184,21 +186,27 @@ if __name__ == '__main__':
     # print(imdb_ids)
 
     # 从数据库查询最新的 豆瓣 TOP250 信息
-    medias = SqlHelper.select_douban_top250()
-    emby_ids = []
-    for media in medias:
-        if media.emby_id:
-            emby_ids.append(media.emby_id)
-    emby = Emby(config)
-    rsp = emby.search_playlist('IMDB TOP250')
-    # logger.info(rsp)
-    if rsp and len(rsp.get('Items')) > 0:
-        playlist_id = rsp.get('Items')[0]['Id']
-        items = emby.get_playlist_items(playlist_id)
-        # logger.info(items)
-        if items and len(items.get('Items')) > 0:
-            item_ids = [item.get('PlaylistItemId') for item in items.get('Items')]
-            emby.remove_playlist_items(playlist_id, item_ids)
-            # emby.add_playlist_items(playlist_id, emby_ids)
-    else:
-        emby.create_playlist('豆瓣 TOP250', emby_ids)
+    # medias = SqlHelper.select_douban_top250()
+    # emby_ids = []
+    # for media in medias:
+    #     if media.emby_id:
+    #         emby_ids.append(media.emby_id)
+    # emby = Emby(config)
+    # rsp = emby.search_playlist('IMDB TOP250')
+    # # logger.info(rsp)
+    # if rsp and len(rsp.get('Items')) > 0:
+    #     playlist_id = rsp.get('Items')[0]['Id']
+    #     logger.info(playlist_id)
+    #     items = emby.get_playlist_items(playlist_id)
+    #     # logger.info(items)
+    #     if items and len(items.get('Items')) > 0:
+    #         item_ids = [item.get('PlaylistItemId') for item in items.get('Items')]
+    #         logger.info(item_ids)
+    #         # emby.remove_playlist_items(playlist_id, item_ids)
+    #         # emby.add_playlist_items(playlist_id, emby_ids)
+    # else:
+    #     # emby.create_playlist('豆瓣 TOP250', emby_ids)
+    #     pass
+
+    wechat = Wechat(config)
+    wechat.send_message('aa','bb')

@@ -17,7 +17,8 @@ handlers:
     class: logging.handlers.TimedRotatingFileHandler
     formatter: standard
     level: INFO
-    filename: ddns.log
+    filename: app.log
+    encoding: utf-8
     when: D
     interval: 1
     backupCount: 5
@@ -25,20 +26,21 @@ handlers:
     class: logging.handlers.TimedRotatingFileHandler
     formatter: standard
     level: ERROR
-    filename: ddns.error.log
+    filename: app.error.log
+    encoding: utf-8
     when: D
     interval: 1
     backupCount: 5
 loggers:
   console:
-    level: INFO
+    level: DEBUG
     propagate: true
     handlers: [console]
-  ddns:
-    level: INFO
-    propagate: true
-    handlers: [console, file, errfile]
+#  app:
+#    level: DEBUG
+#    propagate: true
+#    handlers: [console, file, errfile]
 root:
-  level: INFO
+  level: DEBUG
   propagate: true
-  handlers: [console]
+  handlers: [console, file, errfile]

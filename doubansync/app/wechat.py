@@ -43,7 +43,7 @@ class Wechat(object):
             self.logger.warning(e)
 
         if not token or create_time < hour_before:
-            url = "https://qyapi.weixin.qq.com/cgi-bin/gettoken"
+            url = "https://wechat.dataworld.fun/cgi-bin/gettoken"
             headers = {'content-type': 'application/json; charset=utf-8'}
             params = {"corpid": self.corp_id, "corpsecret": self.secret}
             r = requests.get(url=url, headers=headers, params=params)
@@ -66,7 +66,7 @@ class Wechat(object):
     def send_message(self, subject, message, to='@all'):
         token = self.get_token()
         if token:
-            url = 'https://qyapi.weixin.qq.com/cgi-bin/message/send'
+            url = 'https://wechat.dataworld.fun/cgi-bin/message/send'
             headers = {'content-type': 'application/json; charset=utf-8'}
             params = {
                 'access_token': token

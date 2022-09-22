@@ -29,8 +29,10 @@ class Tmdb(object):
         if token:
             self.token = token
         headers = {
-            'Content-Type': 'application/json;charset=UTF-8',
-            'Authorization': f'Bearer {token}',
+            'Content-Type':
+                'application/json;charset=UTF-8',
+            'Authorization':
+                f'Bearer {token}',
             "User-Agent":
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36"
         }
@@ -65,7 +67,7 @@ class Tmdb(object):
         return self.__invoke(url, params)
 
     def series_seasons(self, tmdb_id):
-        if not  tmdb_id:
+        if not tmdb_id:
             return []
         series_info = self.series_detail(tmdb_id)
         if not series_info:
@@ -87,22 +89,14 @@ class Tmdb(object):
 
     def search_movies(self, title, year=None):
         url = f'{self.base_url}/search/movie'
-        params = {
-            'query': title,
-            'language': 'zh-CN',
-            'include_adult': True
-        }
+        params = {'query': title, 'language': 'zh-CN', 'include_adult': True}
         if year:
             params.update(year=year)
         return self.__invoke(url, urlencode(params))
 
     def search_series(self, title, year=None):
         url = f'{self.base_url}/search/tv'
-        params = {
-            'query': title,
-            'language': 'zh-CN',
-            'include_adult': True
-        }
+        params = {'query': title, 'language': 'zh-CN', 'include_adult': True}
         if year:
             params.update(year=year)
         return self.__invoke(url, urlencode(params))
@@ -256,5 +250,6 @@ class Tmdb(object):
         media.imdb_id = rsp.get('external_ids').get('imdb_id')
         media.tvdb_id = rsp.get('external_ids').get('tvdb_id')
         self.logger.info(
-            f'[tmdb] 识别到媒体信息 {media.media_type.value} {media.title} {media.year}： tmdb.{media.tmdb_id} imdb.{media.imdb_id} tvdb.{media.tvdb_id}')
+            f'[tmdb] 识别到媒体信息 {media.media_type.value} {media.title} {media.year}： tmdb.{media.tmdb_id} imdb.{media.imdb_id} tvdb.{media.tvdb_id}'
+        )
         return media
