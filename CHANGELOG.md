@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.7.5](https://github.com/lightnear/dockerfiles/compare/v1.7.4...v1.7.5) (2022-09-27)
+
+
+### Bug Fixes
+
+* add wechat test ([6af35a8](https://github.com/lightnear/dockerfiles/commit/6af35a8e7cf1888209a4611fa1b5e996b1407401))
+* delete doubansync ddns ([5bc140e](https://github.com/lightnear/dockerfiles/commit/5bc140e4d7c56e466905619af1d50c931a54f6c1))
+* doubansync ([e29f39c](https://github.com/lightnear/dockerfiles/commit/e29f39ca70f57e65f6968945ae819ab262056e90))
+* doubansync ([58925f5](https://github.com/lightnear/dockerfiles/commit/58925f5579f0239512d5eeeb98854d77039c124a))
+* doubansync ([78b077b](https://github.com/lightnear/dockerfiles/commit/78b077b8583bcce6e2946e106b200d7b5c753ae2))
+* fix wechat ([1124fd1](https://github.com/lightnear/dockerfiles/commit/1124fd1d6acd0e8bfe0da122adb5b13db01f0d96))
+* wechat fix ([6360df4](https://github.com/lightnear/dockerfiles/commit/6360df40ccc951b2e0f77f1c2155872631d0e555))
+
 ### [1.7.4](https://github.com/lightnear/dockerfiles/compare/v1.7.3...v1.7.4) (2022-09-20)
 
 
