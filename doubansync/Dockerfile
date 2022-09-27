@@ -7,8 +7,9 @@ ENV LANG en_US.utf8
 
 RUN pip install --upgrade pip setuptools; \
   pip install --no-cache-dir wheel; \
-  pip install --no-cache-dir requests requests-cache schedule; \
-  pip install --no-cache-dir pyyaml lxml cn2an aiohttp bs4;
+  pip install --no-cache-dir loguru requests requests-cache fake_useragent; \
+  pip install --no-cache-dir schedule pyyaml lxml Brotli cn2an aiohttp bs4; \
+  pip install --no-cache-dir pymysql sqlalchemy pytest;
 
 WORKDIR /app
 
