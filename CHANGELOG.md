@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.8.0](https://github.com/lightnear/dockerfiles/compare/v1.7.5...v1.8.0) (2022-10-07)
+
+
+### Features
+
+* add python docker ([24e51a1](https://github.com/lightnear/dockerfiles/commit/24e51a1ab429602b93267ec8931a6bbf1e4394a3))
+
 ### [1.7.5](https://github.com/lightnear/dockerfiles/compare/v1.7.4...v1.7.5) (2022-09-27)
 
 
