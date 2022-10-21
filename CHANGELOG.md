@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.8.1](https://github.com/lightnear/dockerfiles/compare/v1.8.0...v1.8.1) (2022-10-21)
+
+
+### Bug Fixes
+
+* **python:** add psycopg2 ([2f1e646](https://github.com/lightnear/dockerfiles/commit/2f1e646d766959dbf565bc5966bf8ae0931a68d2))
+
 ## [1.8.0](https://github.com/lightnear/dockerfiles/compare/v1.7.5...v1.8.0) (2022-10-07)
 
 
