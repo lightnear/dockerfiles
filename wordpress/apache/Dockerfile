@@ -36,5 +36,5 @@ RUN set -ex; \
 #     sed -i -e 's/pm.min_spare_servers.*/pm.min_spare_servers = 1/' /usr/local/etc/php-fpm.d/www.conf; \
 #     sed -i -e 's/pm.max_spare_servers.*/pm.max_spare_servers = 5/' /usr/local/etc/php-fpm.d/www.conf;
 
-ENTRYPOINT ["docker-entrypoint.sh"]
-CMD ["apache2-foreground"]
+# ENTRYPOINT ["docker-entrypoint.sh"]
+# CMD ["apache2-foreground"]
