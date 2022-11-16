@@ -26,8 +26,7 @@ RUN set -ex; \
 FROM alpine AS dist
 LABEL maintainer="lightnear <lightnear2012@gmail.com>"
 ENV TZ=Asia/Shanghai
-RUN set -ex; \
-    [ ! -e /etc/nsswitch.conf ] && echo 'hosts: files dns' > /etc/nsswitch.conf
+# RUN [ ! -e /etc/nsswitch.conf ] && echo 'hosts: files dns' > /etc/nsswitch.conf
 RUN set -ex; \
     apk upgrade; \
     apk add --no-cache bash tzdata ca-certificates; \
