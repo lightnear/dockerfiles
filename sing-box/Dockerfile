@@ -13,7 +13,6 @@ RUN set -ex; \
     LATEST_VERSION=$(curl -sX GET "https://api.github.com/repos/SagerNet/sing-box/releases/latest" | \
       awk '/tag_name/{print $4;exit}' FS='[""]'); \
     LATEST_VERSION=${LATEST_VERSION:-v1.1}; \
-    LATEST_VERSION=v1.1; \
     git clone -b $LATEST_VERSION https://github.com/SagerNet/sing-box.git; \
     cd sing-box; \
     export COMMIT=$(git rev-parse --short HEAD); \

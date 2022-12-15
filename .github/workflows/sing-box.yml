@@ -25,7 +25,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           submodules: 'recursive'
 
@@ -33,13 +33,13 @@ jobs:
         run: |
           LATEST_VERSION=$(curl -sX GET "https://api.github.com/repos/SagerNet/sing-box/releases/latest" | \
             awk '/tag_name/{print $4;exit}' FS='[""]'); \
-          LATEST_VERSION=${LATEST_VERSION:-1.0.6}; \
-          LATEST_VERSION=1.1.15; \
+          LATEST_VERSION=${LATEST_VERSION:-v1.1.1}; \
+          LATEST_VERSION=$(echo $LATEST_VERSION | tr -d 'v'); \
           echo "LATEST_VERSION=$LATEST_VERSION" >> $GITHUB_ENV
 
       - name: Docker meta
         id: meta
-        uses: docker/metadata-action@v3
+        uses: docker/metadata-action@v4
         with:
           # list of Docker images to use as base name for tags
           images: |
@@ -57,28 +57,28 @@ jobs:
             maintainer=lightnear
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
+        uses: docker/setup-qemu-action@v2
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v2
 
       - name: Login to DockerHub
         if: github.event_name != 'pull_request'
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Log in to the Container registry
         if: github.event_name != 'pull_request'
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           context: ./sing-box
           platforms: |
