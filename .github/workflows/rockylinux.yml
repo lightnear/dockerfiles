@@ -1,4 +1,4 @@
-name: sing-box
+name: rockylinux
 
 on:
   repository_dispatch:
@@ -19,22 +19,20 @@ on:
 jobs:
   docker:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      max-parallel: 1
+      matrix:
+        version: ['8','9']
 
     env:
-        IMAGE: lightnear/sing-box
+        IMAGE: lightnear/rockylinux
 
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
           submodules: 'recursive'
-
-      - name: Get latest version
-        run: |
-          LATEST_VERSION=$(curl -sX GET "https://api.github.com/repos/SagerNet/sing-box/releases/latest" | \
-            awk '/tag_name/{print $4;exit}' FS='[""]'); \
-          LATEST_VERSION=$(echo $LATEST_VERSION | tr -d 'v'); \
-          echo "LATEST_VERSION=$LATEST_VERSION" >> $GITHUB_ENV
 
       - name: Docker meta
         id: meta
@@ -44,16 +42,16 @@ jobs:
           images: |
             ${{ env.IMAGE }}
             ghcr.io/${{ env.IMAGE }}
-          flavor: |
-            latest=auto
+          # flavor: |
+          #   latest=auto
           # generate Docker tags based on the following events/attributes
           tags: |
             type=schedule,pattern=nightly
             type=ref,event=branch
             type=edge,branch=main
-            type=semver,pattern={{version}},value=${{ env.LATEST_VERSION }},enable=${{ env.LATEST_VERSION }}
-            type=semver,pattern={{major}}.{{minor}},value=${{ env.LATEST_VERSION }},enable=${{ env.LATEST_VERSION }}
-            type=semver,pattern={{major}},value=${{ env.LATEST_VERSION }},enable=${{ env.LATEST_VERSION }}
+            type=raw,value=8,enable=${{ contains(matrix.version, '8') && startsWith(github.ref, 'refs/tags/') }}
+            type=raw,value=9,enable=${{ contains(matrix.version, '9') && startsWith(github.ref, 'refs/tags/') }}
+            type=raw,value=latest,enable=${{ contains(matrix.version, '9') && startsWith(github.ref, 'refs/tags/') }}
           labels: |
             maintainer=lightnear
 
@@ -78,10 +76,14 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: edit Dockerfile
+        run: |
+          sed -i -e 's|FROM.*|FROM rockylinux:${{ matrix.version }}|' ./base/rockylinux/Dockerfile
+
       - name: Build and push
         uses: docker/build-push-action@v3
         with:
-          context: ./sing-box
+          context: ./base/rockylinux
           platforms: |
             linux/amd64
             linux/arm64
