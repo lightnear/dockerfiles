@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.10.0](https://github.com/lightnear/dockerfiles/compare/v1.9.6...v1.10.0) (2022-12-15)
+
+
+### Features
+
+* update build scripts ([a633de1](https://github.com/lightnear/dockerfiles/commit/a633de16c9b0129d3362f68a6263a077b7766d3b))
+
+
+### Bug Fixes
+
+* update sing-box ([bc2f21f](https://github.com/lightnear/dockerfiles/commit/bc2f21f0b2ad4cb5b7266a7c41a7aa9a078f0798))
+
 ### [1.9.6](https://github.com/lightnear/dockerfiles/compare/v1.9.5...v1.9.6) (2022-12-03)
 
 
