@@ -79,8 +79,8 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=${{ env.IMAGE }}:buildcache
-          cache-to: type=registry,ref=${{ env.IMAGE }}:buildcache,mode=max
+          cache-from: type=registry,ref=${{ env.IMAGE }}:buildcache-apache
+          cache-to: type=registry,ref=${{ env.IMAGE }}:buildcache-apache,mode=max
 
   wordpress-fpm:
     runs-on: ubuntu-latest
@@ -144,5 +144,5 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=${{ env.IMAGE }}:buildcache
-          cache-to: type=registry,ref=${{ env.IMAGE }}:buildcache,mode=max
+          cache-from: type=registry,ref=${{ env.IMAGE }}:buildcache-fpm
+          cache-to: type=registry,ref=${{ env.IMAGE }}:buildcache-fpm,mode=max

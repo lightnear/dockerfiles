@@ -90,5 +90,5 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=lightnear/${{ matrix.image }}:buildcache
-          cache-to: type=registry,ref=lightnear/${{ matrix.image }}:buildcache,mode=max
+          cache-from: type=registry,ref=${{ env.IMAGE }}:buildcache-${{ matrix.version }}
+          cache-to: type=registry,ref=${{ env.IMAGE }}:buildcache-${{ matrix.version }},mode=max

@@ -51,9 +51,9 @@ jobs:
             type=schedule,pattern=nightly
             type=ref,event=branch
             type=edge,branch=main
-            type=semver,pattern={{version}},value=${{ env.LATEST_VERSION }},enable=${{ env.LATEST_VERSION }}
-            type=semver,pattern={{major}}.{{minor}},value=${{ env.LATEST_VERSION }},enable=${{ env.LATEST_VERSION }}
-            type=semver,pattern={{major}},value=${{ env.LATEST_VERSION }},enable=${{ env.LATEST_VERSION }}
+            type=semver,pattern={{version}},value=${{ env.LATEST_VERSION }},enable=${{ env.LATEST_VERSION != null }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ env.LATEST_VERSION }},enable=${{ env.LATEST_VERSION != null }}
+            type=semver,pattern={{major}},value=${{ env.LATEST_VERSION }},enable=${{ env.LATEST_VERSION != null }}
           labels: |
             maintainer=lightnear
 
