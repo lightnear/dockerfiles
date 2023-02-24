@@ -17,7 +17,7 @@ RUN set -ex; \
     cd sing-box; \
     export COMMIT=$(git rev-parse --short HEAD); \
     go build -v -trimpath -tags \
-      with_quic,with_grpc,with_wireguard,with_shadowsocksr,with_ech,with_utls,with_acme,with_clash_api,with_gvisor,with_lwip \
+      with_quic,with_grpc,with_dhcp,with_wireguard,with_shadowsocksr,with_ech,with_utls,with_acme,with_clash_api,with_v2ray_api,with_gvisor \
       -o /go/bin/sing-box \
       -ldflags "-s -w -buildid=" \
       ./cmd/sing-box
