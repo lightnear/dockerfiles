@@ -1,4 +1,4 @@
-name: sing-box
+name: sing-box-beta
 
 on:
   repository_dispatch:
@@ -32,8 +32,8 @@ jobs:
 
       - name: Get latest version
         run: |
-          LATEST_VERSION=$(curl -sX GET "https://api.github.com/repos/SagerNet/sing-box/releases/latest" | \
-            awk '/tag_name/{print $4;exit}' FS='[""]'); \
+          LATEST_VERSION=$(curl -sX GET "https://api.github.com/repos/SagerNet/sing-box/releases" | \
+            jq -r 'map(select(.prerelease)) | first | .tag_name'); \
           LATEST_VERSION=$(echo $LATEST_VERSION | tr -d 'v'); \
           echo "LATEST_VERSION=$LATEST_VERSION" >> $GITHUB_ENV
 
@@ -45,16 +45,9 @@ jobs:
           images: |
             ${{ env.IMAGE }}
             ghcr.io/${{ env.IMAGE }}
-          flavor: |
-            latest=auto
-          # generate Docker tags based on the following events/attributes
           tags: |
-            type=schedule,pattern=nightly
-            type=ref,event=branch
-            type=edge,branch=main
-            type=semver,pattern={{version}},value=${{ env.LATEST_VERSION }},enable=${{ env.LATEST_VERSION != null }}
-            type=semver,pattern={{major}}.{{minor}},value=${{ env.LATEST_VERSION }},enable=${{ env.LATEST_VERSION != null }}
-            type=semver,pattern={{major}},value=${{ env.LATEST_VERSION }},enable=${{ env.LATEST_VERSION != null }}
+            type=raw,value=beta,enable=${{ env.LATEST_VERSION != null }}
+            type=raw,value=${{ env.LATEST_VERSION }},enable=${{ env.LATEST_VERSION != null }}
           labels: |
             maintainer=lightnear
 
@@ -82,7 +75,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v3
         with:
-          context: ./sing-box
+          context: ./sing-box-beta
           platforms: |
             linux/amd64
             linux/arm64
@@ -207,13 +200,13 @@ jobs:
       GOARM: ${{ matrix.goarm }}
       GOMIPS: ${{ matrix.gomips }}
       CGO_ENABLED: 1
-      TAGS: with_quic,with_grpc,with_dhcp,with_wireguard,with_shadowsocksr,with_ech,with_utls,with_acme,with_clash_api,with_v2ray_api,with_gvisor
+      TAGS: with_quic,with_grpc,with_dhcp,with_wireguard,with_shadowsocksr,with_ech,with_utls,with_reality_server,with_acme,with_clash_api,with_v2ray_api,with_gvisor
 
     steps:
       - name: Get latest version
         run: |
-          LATEST_VERSION=$(curl -sX GET "https://api.github.com/repos/SagerNet/sing-box/releases/latest" | \
-            awk '/tag_name/{print $4;exit}' FS='[""]'); \
+          LATEST_VERSION=$(curl -sX GET "https://api.github.com/repos/SagerNet/sing-box/releases" | \
+            jq -r 'map(select(.prerelease)) | first | .tag_name'); \
           echo "SINGBOX_TAG=$LATEST_VERSION" >> $GITHUB_ENV
           LATEST_VERSION=$(echo $LATEST_VERSION | tr -d 'v'); \
           echo "SINGBOX_VERSION=$LATEST_VERSION" >> $GITHUB_ENV
@@ -238,7 +231,7 @@ jobs:
 
       - name: Build
         id: build
-        run: sed -i 's/CGO_ENABLED=0/CGO_ENABLED=1/g' Makefile && make
+        run: sed -i 's/CGO_ENABLED=0/CGO_ENABLED=1/g' Makefile && cat Makefile && make
 
       - name: Tar files
         run: tar -czvf sing-box-${{ matrix.name }}.tar.gz sing-box*
@@ -256,8 +249,8 @@ jobs:
     steps:
       - name: Get latest version
         run: |
-          LATEST_VERSION=$(curl -sX GET "https://api.github.com/repos/SagerNet/sing-box/releases/latest" | \
-            awk '/tag_name/{print $4;exit}' FS='[""]'); \
+          LATEST_VERSION=$(curl -sX GET "https://api.github.com/repos/SagerNet/sing-box/releases" | \
+            jq -r 'map(select(.prerelease)) | first | .tag_name'); \
           echo "SINGBOX_TAG=$LATEST_VERSION" >> $GITHUB_ENV
           SINGBOX_VERSION=$(echo $LATEST_VERSION | tr -d 'v'); \
           echo "SINGBOX_VERSION=$SINGBOX_VERSION" >> $GITHUB_ENV
@@ -299,6 +292,7 @@ jobs:
         with:
           tag_name: ${{ env.TAG_NAME }}
           name: ${{ env.RELEASE_NAME }}
+          prerelease: true
           files: |
             sing-box*.tar.gz
 
