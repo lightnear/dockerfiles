@@ -32,4 +32,7 @@ RUN set -ex; \
     apk add --no-cache bash tzdata ca-certificates; \
     ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime;
 COPY --from=builder /go/bin/sing-box /usr/local/bin/sing-box
+
+VOLUME /etc/sing-box/config/
+WORKDIR /etc/sing-box/
 ENTRYPOINT ["sing-box"]

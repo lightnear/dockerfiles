@@ -29,6 +29,13 @@ jobs:
         with:
           submodules: 'recursive'
 
+      - name: Get latest version
+        run: |
+          LATEST_VERSION=$(curl -sL "https://api.github.com/repos/FranzKafkaYu/x-ui/releases/latest" | \
+            awk '/tag_name/{print $4;exit}' FS='[""]'); \
+          LATEST_VERSION=$(echo $LATEST_VERSION | tr -d 'v'); \
+          echo "LATEST_VERSION=$LATEST_VERSION" >> $GITHUB_ENV
+
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v4
@@ -44,7 +51,12 @@ jobs:
             type=schedule,pattern=nightly
             type=ref,event=branch
             type=edge,branch=main
-            type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/tags/') }}
+            type=semver,pattern={{version}},value=${{ env.LATEST_VERSION }},enable=${{ env.LATEST_VERSION != null }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ env.LATEST_VERSION }},enable=${{ env.LATEST_VERSION != null }}
+            type=semver,pattern={{major}},value=${{ env.LATEST_VERSION }},enable=${{ !startsWith(env.LATEST_VERSION, '0.') }}
+            type=raw,value=latest,enable=${{ env.LATEST_VERSION != null }}
+            type=raw,value=${{ env.LATEST_VERSION }},enable=${{ env.LATEST_VERSION != null }}
+
           labels: |
             maintainer=lightnear
 
