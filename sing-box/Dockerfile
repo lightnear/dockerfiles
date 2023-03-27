@@ -19,7 +19,7 @@ RUN set -ex; \
     export VERSION=$(go run ./cmd/internal/read_tag); \
     export CGO_ENABLED=1; \
     go build -v -trimpath -tags \
-      with_quic,with_grpc,with_dhcp,with_wireguard,with_shadowsocksr,with_ech,with_utls,with_acme,with_clash_api,with_v2ray_api,with_gvisor \
+      with_quic,with_grpc,with_dhcp,with_wireguard,with_shadowsocksr,with_ech,with_utls,with_reality_server,with_acme,with_clash_api,with_v2ray_api,with_gvisor \
       -o /go/bin/sing-box \
       -ldflags "-X \"github.com/sagernet/sing-box/constant.Version=$VERSION\" -s -w -buildid=" \
       ./cmd/sing-box
