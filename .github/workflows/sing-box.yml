@@ -32,9 +32,12 @@ jobs:
 
       - name: Get latest version
         run: |
+          LATEST_VERSION=""
+          until [ -n "$LATEST_VERSION" ]; do
           LATEST_VERSION=$(curl -sX GET "https://api.github.com/repos/SagerNet/sing-box/releases/latest" | \
-            awk '/tag_name/{print $4;exit}' FS='[""]'); \
-          LATEST_VERSION=$(echo $LATEST_VERSION | tr -d 'v'); \
+          awk '/tag_name/{print $4;exit}' FS='[""]')
+          done
+          LATEST_VERSION=$(echo $LATEST_VERSION | tr -d 'v')
           echo "LATEST_VERSION=$LATEST_VERSION" >> $GITHUB_ENV
 
       - name: Docker meta
@@ -212,10 +215,13 @@ jobs:
     steps:
       - name: Get latest version
         run: |
+          LATEST_VERSION=""
+          until [ -n "$LATEST_VERSION" ]; do
           LATEST_VERSION=$(curl -sX GET "https://api.github.com/repos/SagerNet/sing-box/releases/latest" | \
-            awk '/tag_name/{print $4;exit}' FS='[""]'); \
+          awk '/tag_name/{print $4;exit}' FS='[""]')
+          done
           echo "SINGBOX_TAG=$LATEST_VERSION" >> $GITHUB_ENV
-          LATEST_VERSION=$(echo $LATEST_VERSION | tr -d 'v'); \
+          LATEST_VERSION=$(echo $LATEST_VERSION | tr -d 'v')
           echo "SINGBOX_VERSION=$LATEST_VERSION" >> $GITHUB_ENV
           echo "RELEASE_NAME=Released on $(date +%Y%m%d%H%M) ($LATEST_VERSION)" >> $GITHUB_ENV
           echo "TAG_NAME=$(date +%Y%m%d%H%M)" >> $GITHUB_ENV
@@ -256,10 +262,13 @@ jobs:
     steps:
       - name: Get latest version
         run: |
+          LATEST_VERSION=""
+          until [ -n "$LATEST_VERSION" ]; do
           LATEST_VERSION=$(curl -sX GET "https://api.github.com/repos/SagerNet/sing-box/releases/latest" | \
-            awk '/tag_name/{print $4;exit}' FS='[""]'); \
+          awk '/tag_name/{print $4;exit}' FS='[""]')
+          done
           echo "SINGBOX_TAG=$LATEST_VERSION" >> $GITHUB_ENV
-          SINGBOX_VERSION=$(echo $LATEST_VERSION | tr -d 'v'); \
+          SINGBOX_VERSION=$(echo $LATEST_VERSION | tr -d 'v')
           echo "SINGBOX_VERSION=$SINGBOX_VERSION" >> $GITHUB_ENV
           echo "RELEASE_NAME=sing-box $SINGBOX_VERSION" >> $GITHUB_ENV
           echo "TAG_NAME=sing-box-$SINGBOX_VERSION" >> $GITHUB_ENV
@@ -301,4 +310,3 @@ jobs:
           name: ${{ env.RELEASE_NAME }}
           files: |
             sing-box*.tar.gz
-
