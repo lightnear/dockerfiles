@@ -12,6 +12,7 @@ RUN apk add --no-cache tzdata; \
 
 RUN cd /root; \
     FRP_VERSION=$(curl -sX GET "https://api.github.com/repos/fatedier/frp/releases/latest" | awk '/tag_name/{print $4;exit}' FS='[""]'); \
+    FRP_VERSION=$(echo $FRP_VERSION | tr -d 'v'); \
     FRP_VERSION=${FRP_VERSION:-1.0.0}; \
     wget --no-check-certificate -c https://github.com/fatedier/frp/releases/download/v${FRP_VERSION}/frp_${FRP_VERSION}_linux_amd64.tar.gz; \
     tar zxvf frp_${FRP_VERSION}_linux_amd64.tar.gz;  \

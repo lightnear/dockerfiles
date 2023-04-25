@@ -32,6 +32,7 @@ jobs:
       - name: Get FRP version
         run: |
           FRP_VERSION=$(curl -sX GET "https://api.github.com/repos/fatedier/frp/releases/latest" | awk '/tag_name/{print $4;exit}' FS='[""]')
+          FRP_VERSION=$(echo $FRP_VERSION | tr -d 'v');
           echo "FRP_VERSION=$FRP_VERSION" >> $GITHUB_ENV
 
       - name: Docker meta
