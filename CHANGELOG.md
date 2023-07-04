@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.10.1](https://github.com/lightnear/dockerfiles/compare/v1.10.0...v1.10.1) (2023-07-04)
+
+
+### Bug Fixes
+
+* doubansync add pip package ([9fa646f](https://github.com/lightnear/dockerfiles/commit/9fa646fd7b86f025f17e959c1217b674d9d27405))
+* fix rockylinux curl conflict with curl-minimal ([92fa2a0](https://github.com/lightnear/dockerfiles/commit/92fa2a0edf28e362d12d14fe69495cb7803674ad))
+* fix sing-box ([7a0a141](https://github.com/lightnear/dockerfiles/commit/7a0a1416da1a719d011afeb276ba170af5e1c9a8))
+* sing-box add reality server ([14ff27f](https://github.com/lightnear/dockerfiles/commit/14ff27f22c1da606700e94598347968d5dad1b2f))
+
 ## [1.10.0](https://github.com/lightnear/dockerfiles/compare/v1.9.6...v1.10.0) (2022-12-15)
 
 
