@@ -9,7 +9,8 @@ RUN pip install --upgrade pip setuptools; \
   pip install --no-cache-dir wheel; \
   pip install --no-cache-dir loguru requests requests-cache fake_useragent; \
   pip install --no-cache-dir schedule pyyaml lxml Brotli cn2an aiohttp bs4; \
-  pip install --no-cache-dir pymysql sqlalchemy pytest;
+  pip install --no-cache-dir pymysql sqlalchemy pytest; \
+  pip install --no-cache-dir pysocks qbittorrent-api dacite;
 
 WORKDIR /app
 
