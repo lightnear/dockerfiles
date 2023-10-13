@@ -6,7 +6,7 @@ WORKDIR /go/src/github.com/sagernet
 ARG GOPROXY=""
 ENV GOPROXY ${GOPROXY}
 ENV CGO_ENABLED=1
-ENV TAGS="with_quic,with_grpc,with_dhcp,with_wireguard,with_shadowsocksr,with_ech,with_utls,with_reality_server,with_acme,with_clash_api,with_v2ray_api,with_gvisor"
+ENV TAGS="with_gvisor,with_quic,with_dhcp,with_wireguard,with_ech,with_utls,with_reality_server,with_acme,with_clash_api,with_v2ray_api"
 ENV GOAMD64="v3"
 
 RUN set -ex; \

@@ -111,16 +111,16 @@ jobs:
             goos: windows
             goarch: amd64
             goamd64: v3
-          - name: windows-386
-            goos: windows
-            goarch: 386
-          - name: windows-arm64
-            goos: windows
-            goarch: arm64
-          - name: windows-arm32v7
-            goos: windows
-            goarch: arm
-            goarm: 7
+          # - name: windows-386
+          #   goos: windows
+          #   goarch: 386
+          # - name: windows-arm64
+          #   goos: windows
+          #   goarch: arm64
+          # - name: windows-arm32v7
+          #   goos: windows
+          #   goarch: arm
+          #   goarm: 7
 
           # linux
           - name: linux-amd64
@@ -175,17 +175,17 @@ jobs:
           #   goos: linux
           #   goarch: s390x
           # darwin
-          - name: darwin-amd64
-            goos: darwin
-            goarch: amd64
-            goamd64: v1
-          - name: darwin-amd64-v3
-            goos: darwin
-            goarch: amd64
-            goamd64: v3
-          - name: darwin-arm64
-            goos: darwin
-            goarch: arm64
+          # - name: darwin-amd64
+          #   goos: darwin
+          #   goarch: amd64
+          #   goamd64: v1
+          # - name: darwin-amd64-v3
+          #   goos: darwin
+          #   goarch: amd64
+          #   goamd64: v3
+          # - name: darwin-arm64
+          #   goos: darwin
+          #   goarch: arm64
           # freebsd
           # - name: freebsd-amd64
           #   goos: freebsd
@@ -210,7 +210,7 @@ jobs:
       GOARM: ${{ matrix.goarm }}
       GOMIPS: ${{ matrix.gomips }}
       CGO_ENABLED: 1
-      TAGS: with_quic,with_grpc,with_dhcp,with_wireguard,with_shadowsocksr,with_ech,with_utls,with_reality_server,with_acme,with_clash_api,with_v2ray_api,with_gvisor
+      TAGS: with_gvisor,with_quic,with_dhcp,with_wireguard,with_ech,with_utls,with_reality_server,with_acme,with_clash_api,with_v2ray_api
 
     steps:
       - name: Get latest version
@@ -237,14 +237,21 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v4
         with:
-          go-version: 1.20.x
+          go-version: '1.21'
           check-latest: true
-          cache: true
+          cache: false
           cache-dependency-path: go.sum
 
       - name: Build
         id: build
-        run: sed -i 's/CGO_ENABLED=0/CGO_ENABLED=1/g' Makefile && make
+        run: |
+          # sed -i 's/CGO_ENABLED=0/CGO_ENABLED=1/g' Makefile
+          # make
+          export COMMIT=$(git rev-parse --short HEAD)
+          export VERSION=$(go run ./cmd/internal/read_tag)
+          go build -v -trimpath -tags "$TAGS" \
+          -ldflags "-X \"github.com/sagernet/sing-box/constant.Version=$VERSION\" -s -w -buildid=" \
+          ./cmd/sing-box
 
       - name: Tar files
         run: tar -czvf sing-box-${{ matrix.name }}.tar.gz sing-box*
@@ -293,15 +300,15 @@ jobs:
         with:
           name: sing-box-windows-amd64-v3
 
-      - name: Download artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: sing-box-darwin-amd64
+      # - name: Download artifact
+      #   uses: actions/download-artifact@v3
+      #   with:
+      #     name: sing-box-darwin-amd64
 
-      - name: Download artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: sing-box-darwin-amd64-v3
+      # - name: Download artifact
+      #   uses: actions/download-artifact@v3
+      #   with:
+      #     name: sing-box-darwin-amd64-v3
 
       - name: Release
         uses: softprops/action-gh-release@v1
