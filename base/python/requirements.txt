@@ -1,0 +1,28 @@
+# zabbix alert script
+requests
+loguru
+# ddns
+requests
+loguru
+schedule
+pyyaml
+pysocks
+# douban
+loguru
+requests
+requests-cache
+fake_useragent
+schedule
+pyyaml
+lxml
+Brotli
+cn2an
+aiohttp
+bs4
+pymysql
+psycopg2-binary
+sqlalchemy
+pytest
+pysocks
+qbittorrent-api
+dacite
