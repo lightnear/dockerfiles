@@ -20,5 +20,4 @@ RUN set -ex; \
     apt-get -y install python3-pip; \
     apt-get -y autoremove; \
     apt-get -y clean; \
-    pip3 install requests; \
-    pip3 install --upgrade requests pyzabbix
+    pip3 install --upgrade requests loguru pyzabbix;
