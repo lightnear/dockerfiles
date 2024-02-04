@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.10.4](https://github.com/lightnear/dockerfiles/compare/v1.10.3...v1.10.4) (2024-02-04)
+
+
+### Bug Fixes
+
+* zabbix ([8567510](https://github.com/lightnear/dockerfiles/commit/85675103d851777c0a1e5a1d69faae81a10a57a3))
+
 ### [1.10.3](https://github.com/lightnear/dockerfiles/compare/v1.10.2...v1.10.3) (2024-02-04)
 
 
