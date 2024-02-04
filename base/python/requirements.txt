@@ -1,6 +1,7 @@
 # zabbix alert script
 requests
 loguru
+pyyaml
 # ddns
 requests
 loguru
