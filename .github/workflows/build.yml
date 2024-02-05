@@ -9,23 +9,23 @@ on:
   #   - cron: '0 1 * * 1' # every monday at 1am
   push:
     branches:
-      - 'main'
+      - "main"
     tags:
-      - 'v*.*.*'
+      - "v*.*.*"
   pull_request:
     branches:
-      - 'main'
+      - "main"
 
 jobs:
   alpine-docker:
     runs-on: ubuntu-latest
     env:
-        IMAGE: lightnear/alpine
+      IMAGE: lightnear/alpine
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          submodules: 'recursive'
+          submodules: "recursive"
 
       - name: Docker meta
         id: meta
@@ -85,12 +85,12 @@ jobs:
     needs: alpine-docker
     runs-on: ubuntu-latest
     env:
-        IMAGE: lightnear/centos
+      IMAGE: lightnear/centos
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          submodules: 'recursive'
+          submodules: "recursive"
 
       - name: Docker meta
         id: meta
@@ -154,14 +154,14 @@ jobs:
       fail-fast: true
       max-parallel: 1
       matrix:
-        version: ['20.04','22.04']
+        version: ["20.04", "22.04"]
     env:
-        IMAGE: lightnear/ubuntu
+      IMAGE: lightnear/ubuntu
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          submodules: 'recursive'
+          submodules: "recursive"
 
       - name: Docker meta
         id: meta
@@ -232,16 +232,16 @@ jobs:
       fail-fast: true
       max-parallel: 1
       matrix:
-        version: ['11','12']
+        version: ["11", "12"]
 
     env:
-        IMAGE: lightnear/debian
+      IMAGE: lightnear/debian
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          submodules: 'recursive'
+          submodules: "recursive"
 
       - name: Docker meta
         id: meta
@@ -312,14 +312,14 @@ jobs:
       fail-fast: true
       max-parallel: 1
       matrix:
-        version: ['8','9']
+        version: ["8", "9"]
     env:
-        IMAGE: lightnear/rockylinux
+      IMAGE: lightnear/rockylinux
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          submodules: 'recursive'
+          submodules: "recursive"
 
       - name: Docker meta
         id: meta
@@ -385,12 +385,12 @@ jobs:
     needs: rocky-docker
     runs-on: ubuntu-latest
     env:
-        IMAGE: lightnear/python
+      IMAGE: lightnear/python
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          submodules: 'recursive'
+          submodules: "recursive"
 
       - name: Docker meta
         id: meta
@@ -450,12 +450,12 @@ jobs:
     needs: python-docker
     runs-on: ubuntu-latest
     env:
-        IMAGE: lightnear/tftp
+      IMAGE: lightnear/tftp
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          submodules: 'recursive'
+          submodules: "recursive"
 
       - name: Docker meta
         id: meta
@@ -515,13 +515,13 @@ jobs:
     needs: tftp-docker
     runs-on: ubuntu-latest
     env:
-        IMAGE: lightnear/kms
+      IMAGE: lightnear/kms
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           repository: Wind4/vlmcsd
-          submodules: 'recursive'
+          submodules: "recursive"
 
       - name: Docker meta
         id: meta
@@ -581,12 +581,12 @@ jobs:
     needs: kms-docker
     runs-on: ubuntu-latest
     env:
-        IMAGE: lightnear/frp
+      IMAGE: lightnear/frp
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          submodules: 'recursive'
+          submodules: "recursive"
 
       - name: Get FRP version
         run: |
@@ -655,15 +655,15 @@ jobs:
       fail-fast: true
       max-parallel: 1
       matrix:
-        image: ['zabbix-server-mysql','zabbix-server-pgsql']
-        version: ['ubuntu-6.0-latest']
+        image: ["zabbix-server-pgsql", "zabbix-server-mysql"]
+        version: ["alpine-6.0-latest"]
     env:
-        IMAGE: lightnear/${{ matrix.image }}
+      IMAGE: lightnear/${{ matrix.image }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          submodules: 'recursive'
+          submodules: "recursive"
 
       - name: Docker meta
         id: meta
@@ -681,7 +681,7 @@ jobs:
             type=ref,event=branch
             type=edge,branch=main
             type=raw,value=${{ matrix.version }}
-            type=raw,value=latest,enable=${{ contains(matrix.version, 'ubuntu-6.0-latest') }}
+            type=raw,value=latest,enable=${{ contains(matrix.image, 'zabbix-server-pgsql') && contains(matrix.version, 'alpine-6.0-latest') }}
           labels: |
             maintainer=lightnear
 
@@ -728,12 +728,12 @@ jobs:
     needs: zabbix-docker
     runs-on: ubuntu-latest
     env:
-        IMAGE: lightnear/wordpress
+      IMAGE: lightnear/wordpress
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          submodules: 'recursive'
+          submodules: "recursive"
 
       - name: Docker meta
         id: meta
@@ -793,12 +793,12 @@ jobs:
     needs: wordpress-apache
     runs-on: ubuntu-latest
     env:
-        IMAGE: lightnear/wordpress
+      IMAGE: lightnear/wordpress
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          submodules: 'recursive'
+          submodules: "recursive"
 
       - name: Docker meta
         id: meta
@@ -858,12 +858,12 @@ jobs:
     needs: wordpress-fpm
     runs-on: ubuntu-latest
     env:
-        IMAGE: lightnear/chevereto
+      IMAGE: lightnear/chevereto
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          submodules: 'recursive'
+          submodules: "recursive"
 
       - name: Get FRP version
         run: |
@@ -975,7 +975,7 @@ jobs:
 
       - name: Login to DockerHub
         if: github.event_name != 'pull_request'
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -1144,7 +1144,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.21'
+          go-version: "1.21"
           check-latest: true
           cache: false
 
