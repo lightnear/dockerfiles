@@ -42,7 +42,8 @@ jobs:
             type=schedule,pattern=nightly
             type=ref,event=branch
             type=edge,branch=main
-            type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/tags/') }}
+            type=raw,value=latest
+            # type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/tags/') }}
           labels: |
             maintainer=lightnear
 
@@ -100,15 +101,17 @@ jobs:
           images: |
             ${{ env.IMAGE }}
             ghcr.io/${{ env.IMAGE }}
-          flavor: |
-            latest=auto
+          # flavor: |
+          #   latest=auto
           # generate Docker tags based on the following events/attributes
           tags: |
             type=schedule,pattern=nightly
             type=ref,event=branch
             type=edge,branch=main
-            type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/tags/') }}
-            type=raw,value=7,enable=${{ startsWith(github.ref, 'refs/tags/') }}
+            type=raw,value=7
+            type=raw,value=latest
+            # type=raw,value=7,enable=${{ startsWith(github.ref, 'refs/tags/') }}
+            # type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/tags/') }}
           labels: |
             maintainer=lightnear
 
@@ -178,11 +181,16 @@ jobs:
             type=schedule,pattern=nightly
             type=ref,event=branch
             type=edge,branch=main
-            type=raw,value=20.04,enable=${{ contains(matrix.version, '20.04') && startsWith(github.ref, 'refs/tags/') }}
-            type=raw,value=focal,enable=${{ contains(matrix.version, '20.04') && startsWith(github.ref, 'refs/tags/') }}
-            type=raw,value=22.04,enable=${{ contains(matrix.version, '22.04') && startsWith(github.ref, 'refs/tags/') }}
-            type=raw,value=jammy,enable=${{ contains(matrix.version, '22.04') && startsWith(github.ref, 'refs/tags/') }}
-            type=raw,value=latest,enable=${{ contains(matrix.version, '22.04') && startsWith(github.ref, 'refs/tags/') }}
+            type=raw,value=20.04,enable=${{ contains(matrix.version, '20.04') }}
+            type=raw,value=focal,enable=${{ contains(matrix.version, '20.04') }}
+            type=raw,value=22.04,enable=${{ contains(matrix.version, '22.04') }}
+            type=raw,value=jammy,enable=${{ contains(matrix.version, '22.04') }}
+            type=raw,value=latest,enable=${{ contains(matrix.version, '22.04') }}
+            # type=raw,value=20.04,enable=${{ contains(matrix.version, '20.04') && startsWith(github.ref, 'refs/tags/') }}
+            # type=raw,value=focal,enable=${{ contains(matrix.version, '20.04') && startsWith(github.ref, 'refs/tags/') }}
+            # type=raw,value=22.04,enable=${{ contains(matrix.version, '22.04') && startsWith(github.ref, 'refs/tags/') }}
+            # type=raw,value=jammy,enable=${{ contains(matrix.version, '22.04') && startsWith(github.ref, 'refs/tags/') }}
+            # type=raw,value=latest,enable=${{ contains(matrix.version, '22.04') && startsWith(github.ref, 'refs/tags/') }}
           labels: |
             maintainer=lightnear
 
@@ -258,11 +266,16 @@ jobs:
             type=schedule,pattern=nightly
             type=ref,event=branch
             type=edge,branch=main
-            type=raw,value=10,enable=${{ contains(matrix.version, '10') && startsWith(github.ref, 'refs/tags/') }}
-            type=raw,value=buster,enable=${{ contains(matrix.version, '10') && startsWith(github.ref, 'refs/tags/') }}
-            type=raw,value=11,enable=${{ contains(matrix.version, '11') && startsWith(github.ref, 'refs/tags/') }}
-            type=raw,value=bullseye,enable=${{ contains(matrix.version, '11') && startsWith(github.ref, 'refs/tags/') }}
-            type=raw,value=latest,enable=${{ contains(matrix.version, '11') && startsWith(github.ref, 'refs/tags/') }}
+            type=raw,value=11,enable=${{ contains(matrix.version, '11') }}
+            type=raw,value=bullseye,enable=${{ contains(matrix.version, '11') }}
+            type=raw,value=12,enable=${{ contains(matrix.version, '12') }}
+            type=raw,value=bookworm,enable=${{ contains(matrix.version, '12') }}
+            type=raw,value=latest,enable=${{ contains(matrix.version, '12') }}
+            # type=raw,value=11,enable=${{ contains(matrix.version, '11') && startsWith(github.ref, 'refs/tags/') }}
+            # type=raw,value=bullseye,enable=${{ contains(matrix.version, '11') && startsWith(github.ref, 'refs/tags/') }}
+            # type=raw,value=12,enable=${{ contains(matrix.version, '12') && startsWith(github.ref, 'refs/tags/') }}
+            # type=raw,value=bookworm,enable=${{ contains(matrix.version, '12') && startsWith(github.ref, 'refs/tags/') }}
+            # type=raw,value=latest,enable=${{ contains(matrix.version, '12') && startsWith(github.ref, 'refs/tags/') }}
           labels: |
             maintainer=lightnear
 
@@ -336,9 +349,12 @@ jobs:
             type=schedule,pattern=nightly
             type=ref,event=branch
             type=edge,branch=main
-            type=raw,value=8,enable=${{ contains(matrix.version, '8') && startsWith(github.ref, 'refs/tags/') }}
-            type=raw,value=9,enable=${{ contains(matrix.version, '9') && startsWith(github.ref, 'refs/tags/') }}
-            type=raw,value=latest,enable=${{ contains(matrix.version, '9') && startsWith(github.ref, 'refs/tags/') }}
+            type=raw,value=8,enable=${{ contains(matrix.version, '8') }}
+            type=raw,value=9,enable=${{ contains(matrix.version, '9') }}
+            type=raw,value=latest,enable=${{ contains(matrix.version, '9') }}
+            # type=raw,value=8,enable=${{ contains(matrix.version, '8') && startsWith(github.ref, 'refs/tags/') }}
+            # type=raw,value=9,enable=${{ contains(matrix.version, '9') && startsWith(github.ref, 'refs/tags/') }}
+            # type=raw,value=latest,enable=${{ contains(matrix.version, '9') && startsWith(github.ref, 'refs/tags/') }}
           labels: |
             maintainer=lightnear
 
@@ -400,14 +416,14 @@ jobs:
           images: |
             ${{ env.IMAGE }}
             ghcr.io/${{ env.IMAGE }}
-          flavor: |
-            latest=auto
+          # flavor: |
+          #   latest=auto
           # generate Docker tags based on the following events/attributes
           tags: |
             type=schedule,pattern=nightly
             type=ref,event=branch
             type=edge,branch=main
-            type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/tags/') }}
+            type=raw,value=latest
           labels: |
             maintainer=lightnear
 
@@ -465,14 +481,14 @@ jobs:
           images: |
             ${{ env.IMAGE }}
             ghcr.io/${{ env.IMAGE }}
-          flavor: |
-            latest=auto
+          # flavor: |
+          #   latest=auto
           # generate Docker tags based on the following events/attributes
           tags: |
             type=schedule,pattern=nightly
             type=ref,event=branch
             type=edge,branch=main
-            type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/tags/') }}
+            type=raw,value=latest
           labels: |
             maintainer=lightnear
 
@@ -531,14 +547,14 @@ jobs:
           images: |
             ${{ env.IMAGE }}
             ghcr.io/${{ env.IMAGE }}
-          flavor: |
-            latest=auto
+          # flavor: |
+          #   latest=auto
           # generate Docker tags based on the following events/attributes
           tags: |
             type=schedule,pattern=nightly
             type=ref,event=branch
             type=edge,branch=main
-            type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/tags/') }}
+            type=raw,value=latest
           labels: |
             maintainer=lightnear
 
@@ -1134,7 +1150,7 @@ jobs:
           echo "TAG_NAME=$(date +%Y%m%d%H%M)" >> $GITHUB_ENV
 
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: SagerNet/sing-box
           ref: ${{ env.SINGBOX_TAG }}
