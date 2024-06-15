@@ -1,21 +1,27 @@
-FROM zabbix/zabbix-server-pgsql:alpine-6.0-latest
+FROM zabbix/zabbix-server-pgsql:alpine-7.0-latest
 LABEL maintainer="lightnear<lightnear@qq.com>"
-
-ENV TZ=Asia/Shanghai
-ENV LANG en_US.utf8
 
 USER root
 
+ENV TZ=Asia/Shanghai
+ENV LANG en_US.UTF-8
+ENV LC_ALL en_US.UTF-8
+
 RUN set -ex; \
-    # sed -i 's|archive.ubuntu.com|mirrors.aliyun.com|g' /etc/apt/sources.list; \
-    # sed -i 's|security.ubuntu.com|mirrors.aliyun.com|g' /etc/apt/sources.list; \
-    apk add --no-cache bash tzdata ca-certificates; \
+    apk add --update --no-cache bash tzdata locales ca-certificates; \
     cp /usr/share/zoneinfo/${TZ} /etc/localtime; \
     echo ${TZ} > /etc/timezone; \
-    apk add --no-cache python3 py3-pip
+    localedef -c -f UTF-8 -i en_US en_US.UTF-8;
 
+RUN apk del tzdata;
+
+RUN set -ex; \
+    apk add --update --no-cache python3; \
+    ln -sf python3 /usr/bin/python; \
+    python3 -m ensurepip; \
+    pip3 install --no-cache --upgrade pip setuptools;
 
 COPY requirements.txt .
-RUN pip install --upgrade --no-cache pip setuptools wheel; \
-  pip install --no-cache -r requirements.txt; \
-  pip cache purge;
+RUN pip3 install --upgrade --no-cache pip setuptools wheel; \
+  pip3 install --no-cache -r requirements.txt; \
+  pip3 cache purge;
