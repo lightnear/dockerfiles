@@ -672,7 +672,7 @@ jobs:
       max-parallel: 1
       matrix:
         image: ["zabbix-server-pgsql", "zabbix-server-mysql"]
-        version: ["alpine-6.0-latest"]
+        version: ["alpine-7.0-latest"]
     env:
       IMAGE: lightnear/${{ matrix.image }}
     steps:
@@ -697,7 +697,7 @@ jobs:
             type=ref,event=branch
             type=edge,branch=main
             type=raw,value=${{ matrix.version }}
-            type=raw,value=latest,enable=${{ contains(matrix.version, 'alpine-6.0-latest') }}
+            type=raw,value=latest,enable=${{ contains(matrix.version, 'alpine-7.0-latest') }}
           labels: |
             maintainer=lightnear
 
@@ -940,86 +940,86 @@ jobs:
           cache-from: type=registry,ref=${{ env.IMAGE }}:buildcache
           cache-to: type=registry,ref=${{ env.IMAGE }}:buildcache,mode=max
 
-  singbox-docker:
-    if: ${{ always() }}
-    needs: chevereto-docker
-    runs-on: ubuntu-latest
-    env:
-      IMAGE: lightnear/sing-box
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          submodules: "recursive"
+  # singbox-docker:
+  #   if: ${{ always() }}
+  #   needs: chevereto-docker
+  #   runs-on: ubuntu-latest
+  #   env:
+  #     IMAGE: lightnear/sing-box
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+  #       with:
+  #         submodules: "recursive"
 
-      - name: Get latest version
-        run: |
-          LATEST_VERSION=""
-          until [ -n "$LATEST_VERSION" ]; do
-          LATEST_VERSION=$(curl -sX GET "https://api.github.com/repos/SagerNet/sing-box/releases/latest" | \
-          awk '/tag_name/{print $4;exit}' FS='[""]')
-          done
-          LATEST_VERSION=$(echo $LATEST_VERSION | tr -d 'v')
-          echo "LATEST_VERSION=$LATEST_VERSION" >> $GITHUB_ENV
+  #     - name: Get latest version
+  #       run: |
+  #         LATEST_VERSION=""
+  #         until [ -n "$LATEST_VERSION" ]; do
+  #         LATEST_VERSION=$(curl -sX GET "https://api.github.com/repos/SagerNet/sing-box/releases/latest" | \
+  #         awk '/tag_name/{print $4;exit}' FS='[""]')
+  #         done
+  #         LATEST_VERSION=$(echo $LATEST_VERSION | tr -d 'v')
+  #         echo "LATEST_VERSION=$LATEST_VERSION" >> $GITHUB_ENV
 
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          # list of Docker images to use as base name for tags
-          images: |
-            ${{ env.IMAGE }}
-            ghcr.io/${{ env.IMAGE }}
-          flavor: |
-            latest=auto
-          # generate Docker tags based on the following events/attributes
-          tags: |
-            type=schedule,pattern=nightly
-            type=ref,event=branch
-            type=edge,branch=main
-            type=semver,pattern={{version}},value=${{ env.LATEST_VERSION }},enable=${{ env.LATEST_VERSION != null }}
-            type=semver,pattern={{major}}.{{minor}},value=${{ env.LATEST_VERSION }},enable=${{ env.LATEST_VERSION != null }}
-            type=semver,pattern={{major}},value=${{ env.LATEST_VERSION }},enable=${{ env.LATEST_VERSION != null }}
-          labels: |
-            maintainer=lightnear
+  #     - name: Docker meta
+  #       id: meta
+  #       uses: docker/metadata-action@v5
+  #       with:
+  #         # list of Docker images to use as base name for tags
+  #         images: |
+  #           ${{ env.IMAGE }}
+  #           ghcr.io/${{ env.IMAGE }}
+  #         flavor: |
+  #           latest=auto
+  #         # generate Docker tags based on the following events/attributes
+  #         tags: |
+  #           type=schedule,pattern=nightly
+  #           type=ref,event=branch
+  #           type=edge,branch=main
+  #           type=semver,pattern={{version}},value=${{ env.LATEST_VERSION }},enable=${{ env.LATEST_VERSION != null }}
+  #           type=semver,pattern={{major}}.{{minor}},value=${{ env.LATEST_VERSION }},enable=${{ env.LATEST_VERSION != null }}
+  #           type=semver,pattern={{major}},value=${{ env.LATEST_VERSION }},enable=${{ env.LATEST_VERSION != null }}
+  #         labels: |
+  #           maintainer=lightnear
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+  #     - name: Set up QEMU
+  #       uses: docker/setup-qemu-action@v3
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+  #     - name: Set up Docker Buildx
+  #       uses: docker/setup-buildx-action@v3
 
-      - name: Login to DockerHub
-        if: github.event_name != 'pull_request'
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+  #     - name: Login to DockerHub
+  #       if: github.event_name != 'pull_request'
+  #       uses: docker/login-action@v3
+  #       with:
+  #         username: ${{ secrets.DOCKERHUB_USERNAME }}
+  #         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Log in to the Container registry
-        if: github.event_name != 'pull_request'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+  #     - name: Log in to the Container registry
+  #       if: github.event_name != 'pull_request'
+  #       uses: docker/login-action@v3
+  #       with:
+  #         registry: ghcr.io
+  #         username: ${{ github.actor }}
+  #         password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push
-        uses: docker/build-push-action@v5
-        with:
-          context: ./sing-box
-          platforms: |
-            linux/amd64
-            linux/arm64
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          # cache-from: type=registry,ref=${{ env.IMAGE }}:buildcache
-          # cache-to: type=registry,ref=${{ env.IMAGE }}:buildcache,mode=max
+  #     - name: Build and push
+  #       uses: docker/build-push-action@v5
+  #       with:
+  #         context: ./sing-box
+  #         platforms: |
+  #           linux/amd64
+  #           linux/arm64
+  #         push: ${{ github.event_name != 'pull_request' }}
+  #         tags: ${{ steps.meta.outputs.tags }}
+  #         labels: ${{ steps.meta.outputs.labels }}
+  #         # cache-from: type=registry,ref=${{ env.IMAGE }}:buildcache
+  #         # cache-to: type=registry,ref=${{ env.IMAGE }}:buildcache,mode=max
 
   singbox-build:
     if: ${{ always() }}
-    needs: singbox-docker
+    needs: chevereto-docker
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false

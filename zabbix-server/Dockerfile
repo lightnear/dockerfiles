@@ -8,20 +8,22 @@ ENV LANG en_US.UTF-8
 ENV LC_ALL en_US.UTF-8
 
 RUN set -ex; \
-    apk add --update --no-cache bash tzdata locales ca-certificates; \
+    apk add --no-cache bash tzdata musl-locales; \
     cp /usr/share/zoneinfo/${TZ} /etc/localtime; \
     echo ${TZ} > /etc/timezone; \
-    localedef -c -f UTF-8 -i en_US en_US.UTF-8;
+    echo "export LC_ALL=${LC_ALL}" > /etc/profile.d/locale.sh; \
+    echo "export LANG=${LANG}" >> /etc/profile.d/locale.sh; \
+    chmod +x /etc/profile.d/locale.sh; \
+    /etc/profile.d/locale.sh;
 
 RUN apk del tzdata;
 
 RUN set -ex; \
-    apk add --update --no-cache python3; \
+    apk add --update --no-cache python3 py3-pip; \
     ln -sf python3 /usr/bin/python; \
-    python3 -m ensurepip; \
-    pip3 install --no-cache --upgrade pip setuptools;
+    # python3 -m ensurepip; \
+    pip3 install --no-cache --upgrade --break-system-packages pip setuptools wheel;
 
 COPY requirements.txt .
-RUN pip3 install --upgrade --no-cache pip setuptools wheel; \
-  pip3 install --no-cache -r requirements.txt; \
-  pip3 cache purge;
+RUN pip3 install --no-cache --break-system-packages -r requirements.txt; \
+    pip3 cache purge;
