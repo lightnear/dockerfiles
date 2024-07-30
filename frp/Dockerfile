@@ -2,7 +2,7 @@ FROM alpine:latest
 
 LABEL maintainer="lightnear<lightnear@qq.com>"
 
-ENV TZ=Asia/Shanghai
+ENV TZ Asia/Shanghai
 
 RUN apk add --no-cache tzdata; \
     cp /usr/share/zoneinfo/${TZ} /etc/localtime; \

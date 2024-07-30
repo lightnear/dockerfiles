@@ -2,7 +2,7 @@ FROM debian:11
 
 LABEL maintainer="lightnear<lightnear@qq.com>"
 
-ENV TZ=Asia/Shanghai
+ENV TZ Asia/Shanghai
 ENV LANG en_US.utf8
 
 # Do not use https, because ca-certificates is not installed and certificate verification failed error would accour

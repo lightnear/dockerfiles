@@ -2,7 +2,7 @@ FROM centos:7
 
 LABEL maintainer="lightnear<lightnear@qq.com>"
 
-ENV TZ=Asia/Shanghai
+ENV TZ Asia/Shanghai
 
 RUN set -ex; \
     ln -fs /usr/share/zoneinfo/${TZ} /etc/localtime; \

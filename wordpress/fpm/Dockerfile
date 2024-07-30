@@ -2,7 +2,7 @@ FROM wordpress:fpm
 
 LABEL maintainer="lightnear<lightnear@qq.com>"
 
-ENV TZ=Asia/Shanghai
+ENV TZ Asia/Shanghai
 ENV LANG en_US.utf8
 
 RUN set -ex; \
@@ -23,19 +23,19 @@ RUN set -ex; \
     { \
     echo "max_input_vars = 5000"; \
     echo "max_execution_time = 300"; \
-    echo "post_max_size = 50M"; \
-    echo "upload_max_filesize = 50M"; \
-    echo "memory_limit = 1024M"; \
+    echo "post_max_size = 1024M"; \
+    echo "upload_max_filesize = 1024M"; \
+    echo "memory_limit = -1"; \
     echo "date.timezone = Asia/Shanghai"; \
     } > $PHP_INI_DIR/conf.d/php_newspaper.ini
 
 # optimize php-fpm
 RUN set -ex; \
     sed -i -e 's/listen = 127.0.0.1:9000/listen = 9000/' /usr/local/etc/php-fpm.d/www.conf; \
-    sed -i -e 's/pm.max_children.*/pm.max_children = 20/' /usr/local/etc/php-fpm.d/www.conf; \
-    sed -i -e 's/pm.start_servers.*/pm.start_servers = 5/' /usr/local/etc/php-fpm.d/www.conf; \
+    sed -i -e 's/pm.max_children.*/pm.max_children = 10/' /usr/local/etc/php-fpm.d/www.conf; \
+    sed -i -e 's/pm.start_servers.*/pm.start_servers = 3/' /usr/local/etc/php-fpm.d/www.conf; \
     sed -i -e 's/pm.min_spare_servers.*/pm.min_spare_servers = 1/' /usr/local/etc/php-fpm.d/www.conf; \
-    sed -i -e 's/pm.max_spare_servers.*/pm.max_spare_servers = 5/' /usr/local/etc/php-fpm.d/www.conf;
+    sed -i -e 's/pm.max_spare_servers.*/pm.max_spare_servers = 3/' /usr/local/etc/php-fpm.d/www.conf;
 
 ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["php-fpm"]

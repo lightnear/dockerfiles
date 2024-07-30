@@ -2,7 +2,7 @@ FROM alpine:latest
 
 LABEL maintainer="lightnear<lightnear@qq.com>"
 
-ENV TZ=Asia/Shanghai
+ENV TZ Asia/Shanghai
 ENV LANG en_US.UTF-8
 ENV LC_ALL en_US.UTF-8
 

@@ -2,7 +2,7 @@ FROM ubuntu:latest
 
 LABEL maintainer="lightnear<lightnear@qq.com>"
 
-ENV TZ=Asia/Shanghai
+ENV TZ Asia/Shanghai
 ENV LANG en_US.utf8
 
 RUN set -ex; \

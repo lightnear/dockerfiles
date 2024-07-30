@@ -2,7 +2,7 @@ FROM wordpress:apache
 
 LABEL maintainer="lightnear<lightnear@qq.com>"
 
-ENV TZ=Asia/Shanghai
+ENV TZ Asia/Shanghai
 ENV LANG en_US.utf8
 
 RUN set -ex; \
@@ -23,9 +23,9 @@ RUN set -ex; \
     { \
     echo "max_input_vars = 5000"; \
     echo "max_execution_time = 300"; \
-    echo "post_max_size = 50M"; \
-    echo "upload_max_filesize = 50M"; \
-    echo "memory_limit = 1024M"; \
+    echo "post_max_size = 1024M"; \
+    echo "upload_max_filesize = 1024M"; \
+    echo "memory_limit = -1"; \
     echo "date.timezone = Asia/Shanghai"; \
     } > $PHP_INI_DIR/conf.d/php_newspaper.ini
 

@@ -3,7 +3,7 @@ FROM ubuntu:22.04
 LABEL maintainer="lightnear<lightnear@qq.com>"
 
 ENV DEBIAN_FRONTEND noninteractive
-ENV TZ=Asia/Shanghai
+ENV TZ Asia/Shanghai
 ENV LANG en_US.UTF-8
 
 RUN set -ex; \

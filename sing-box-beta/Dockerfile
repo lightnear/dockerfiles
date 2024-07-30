@@ -1,7 +1,7 @@
 FROM golang:1.20-alpine AS builder
 LABEL maintainer="lightnear <lightnear2012@gmail.com>"
 
-ENV TZ=Asia/Shanghai
+ENV TZ Asia/Shanghai
 WORKDIR /go/src/github.com/sagernet
 ARG GOPROXY=""
 ENV GOPROXY ${GOPROXY}
