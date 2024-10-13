@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.11.0](https://github.com/lightnear/dockerfiles/compare/v1.10.7...v1.11.0) (2024-10-13)
+
+
+### Features
+
+* update wordpress ([952411c](https://github.com/lightnear/dockerfiles/commit/952411cfaf75b8ce7ffb39f7847735a974054f04))
+
+
+### Bug Fixes
+
+* update alpine base image ([70fb992](https://github.com/lightnear/dockerfiles/commit/70fb99278d9e46fcf5be9930a748e1de552acdf1))
+* update dockerfiles ([14ceac6](https://github.com/lightnear/dockerfiles/commit/14ceac62421bcf3f6075c11c1adee1f1d826dbc9))
+* update gh-release ([84550e5](https://github.com/lightnear/dockerfiles/commit/84550e5e8653ad033b209c362a74d7da2e279897))
+* update ubuntu version ([c06815a](https://github.com/lightnear/dockerfiles/commit/c06815a3506f145e4d368fd1dfd24d76d1b9c339))
+* update zabbix ([3297d7b](https://github.com/lightnear/dockerfiles/commit/3297d7b3a2707fba65ba5477b50daba84dda807e))
+* update zabbix server image version ([56ca5e1](https://github.com/lightnear/dockerfiles/commit/56ca5e10f0f6fac280758767ed164d7b6dcb7992))
+* update zabbix version ([c907904](https://github.com/lightnear/dockerfiles/commit/c907904cf56cb929c8b305d4df2dd5c75714f6de))
+
 ### [1.10.7](https://github.com/lightnear/dockerfiles/compare/v1.10.6...v1.10.7) (2024-02-05)
 
 ### [1.10.6](https://github.com/lightnear/dockerfiles/compare/v1.10.5...v1.10.6) (2024-02-05)
