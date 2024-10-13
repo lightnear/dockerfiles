@@ -2,8 +2,8 @@ FROM python:3
 
 LABEL maintainer="lightnear<lightnear@qq.com>"
 
-ENV TZ Asia/Shanghai
-ENV LANG en_US.utf8
+ENV TZ=Asia/Shanghai
+ENV LANG=en_US.utf8
 
 COPY requirements.txt .
 RUN pip install --upgrade --no-cache pip setuptools wheel; \

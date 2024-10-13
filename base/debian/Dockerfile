@@ -2,9 +2,9 @@ FROM debian:latest
 
 LABEL maintainer="lightnear<lightnear@qq.com>"
 
-ENV DEBIAN_FRONTEND noninteractive
-ENV TZ Asia/Shanghai
-ENV LANG en_US.UTF-8
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=Asia/Shanghai
+ENV LANG=en_US.UTF-8
 
 # Do not use https, because ca-certificates is not installed and certificate verification failed error would accour
 RUN set -ex; \

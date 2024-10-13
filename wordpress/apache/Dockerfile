@@ -2,8 +2,8 @@ FROM wordpress:apache
 
 LABEL maintainer="lightnear<lightnear@qq.com>"
 
-ENV TZ Asia/Shanghai
-ENV LANG en_US.utf8
+ENV TZ=Asia/Shanghai
+ENV LANG=en_US.utf8
 
 RUN set -ex; \
     apt-get update; \

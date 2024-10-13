@@ -2,9 +2,9 @@ FROM ubuntu:22.04
 
 LABEL maintainer="lightnear<lightnear@qq.com>"
 
-ENV DEBIAN_FRONTEND noninteractive
-ENV TZ Asia/Shanghai
-ENV LANG en_US.UTF-8
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=Asia/Shanghai
+ENV LANG=en_US.UTF-8
 
 RUN set -ex; \
     # sed -i 's|archive.ubuntu.com|mirrors.aliyun.com|g' /etc/apt/sources.list; \

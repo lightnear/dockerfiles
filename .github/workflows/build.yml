@@ -240,7 +240,7 @@ jobs:
       fail-fast: true
       max-parallel: 1
       matrix:
-        version: ["11", "12"]
+        version: ["12", "11"]
 
     env:
       IMAGE: lightnear/debian
@@ -325,7 +325,7 @@ jobs:
       fail-fast: true
       max-parallel: 1
       matrix:
-        version: ["8", "9"]
+        version: ["9", "8"]
     env:
       IMAGE: lightnear/rockylinux
     steps:
@@ -663,282 +663,282 @@ jobs:
           cache-from: type=registry,ref=${{ env.IMAGE }}:buildcache
           cache-to: type=registry,ref=${{ env.IMAGE }}:buildcache,mode=max
 
-  zabbix-docker:
-    if: ${{ always() }}
-    needs: frp-docker
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: true
-      max-parallel: 1
-      matrix:
-        image: ["zabbix-server-pgsql", "zabbix-server-mysql"]
-        version: ["alpine-7.0-latest"]
-    env:
-      IMAGE: lightnear/${{ matrix.image }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          submodules: "recursive"
+  # zabbix-docker:
+  #   if: ${{ always() }}
+  #   needs: frp-docker
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     fail-fast: true
+  #     max-parallel: 1
+  #     matrix:
+  #       image: ["zabbix-server-pgsql", "zabbix-server-mysql"]
+  #       version: ["alpine-7.0-latest"]
+  #   env:
+  #     IMAGE: lightnear/${{ matrix.image }}
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+  #       with:
+  #         submodules: "recursive"
 
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          # list of Docker images to use as base name for tags
-          images: |
-            ${{ env.IMAGE }}
-            ghcr.io/${{ env.IMAGE }}
-          # flavor: |
-          #   latest=auto
-          # generate Docker tags based on the following events/attributes
-          tags: |
-            type=schedule,pattern=nightly
-            type=ref,event=branch
-            type=edge,branch=main
-            type=raw,value=${{ matrix.version }}
-            type=raw,value=latest,enable=${{ contains(matrix.version, 'alpine-7.0-latest') }}
-          labels: |
-            maintainer=lightnear
+  #     - name: Docker meta
+  #       id: meta
+  #       uses: docker/metadata-action@v5
+  #       with:
+  #         # list of Docker images to use as base name for tags
+  #         images: |
+  #           ${{ env.IMAGE }}
+  #           ghcr.io/${{ env.IMAGE }}
+  #         # flavor: |
+  #         #   latest=auto
+  #         # generate Docker tags based on the following events/attributes
+  #         tags: |
+  #           type=schedule,pattern=nightly
+  #           type=ref,event=branch
+  #           type=edge,branch=main
+  #           type=raw,value=${{ matrix.version }}
+  #           type=raw,value=latest,enable=${{ contains(matrix.version, 'alpine-7.0-latest') }}
+  #         labels: |
+  #           maintainer=lightnear
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+  #     - name: Set up QEMU
+  #       uses: docker/setup-qemu-action@v3
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+  #     - name: Set up Docker Buildx
+  #       uses: docker/setup-buildx-action@v3
 
-      - name: Login to DockerHub
-        if: github.event_name != 'pull_request'
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+  #     - name: Login to DockerHub
+  #       if: github.event_name != 'pull_request'
+  #       uses: docker/login-action@v3
+  #       with:
+  #         username: ${{ secrets.DOCKERHUB_USERNAME }}
+  #         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Log in to the Container registry
-        if: github.event_name != 'pull_request'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+  #     - name: Log in to the Container registry
+  #       if: github.event_name != 'pull_request'
+  #       uses: docker/login-action@v3
+  #       with:
+  #         registry: ghcr.io
+  #         username: ${{ github.actor }}
+  #         password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: edit Dockerfile
-        run: |
-          sed -i -e 's|FROM.*|FROM zabbix/${{ matrix.image }}:${{ matrix.version }}|' ./zabbix-server/Dockerfile
+  #     - name: edit Dockerfile
+  #       run: |
+  #         sed -i -e 's|FROM.*|FROM zabbix/${{ matrix.image }}:${{ matrix.version }}|' ./zabbix-server/Dockerfile
 
-      - name: Build and push
-        uses: docker/build-push-action@v5
-        with:
-          context: ./zabbix-server
-          platforms: |
-            linux/amd64
-            linux/arm64
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=${{ env.IMAGE }}:buildcache-${{ matrix.version }}
-          cache-to: type=registry,ref=${{ env.IMAGE }}:buildcache-${{ matrix.version }},mode=max
+  #     - name: Build and push
+  #       uses: docker/build-push-action@v5
+  #       with:
+  #         context: ./zabbix-server
+  #         platforms: |
+  #           linux/amd64
+  #           linux/arm64
+  #         push: ${{ github.event_name != 'pull_request' }}
+  #         tags: ${{ steps.meta.outputs.tags }}
+  #         labels: ${{ steps.meta.outputs.labels }}
+  #         cache-from: type=registry,ref=${{ env.IMAGE }}:buildcache-${{ matrix.version }}
+  #         cache-to: type=registry,ref=${{ env.IMAGE }}:buildcache-${{ matrix.version }},mode=max
 
-  wordpress-apache:
-    if: ${{ always() }}
-    needs: zabbix-docker
-    runs-on: ubuntu-latest
-    env:
-      IMAGE: lightnear/wordpress
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          submodules: "recursive"
+  # wordpress-apache:
+  #   if: ${{ always() }}
+  #   needs: zabbix-docker
+  #   runs-on: ubuntu-latest
+  #   env:
+  #     IMAGE: lightnear/wordpress
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+  #       with:
+  #         submodules: "recursive"
 
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          # list of Docker images to use as base name for tags
-          images: |
-            ${{ env.IMAGE }}
-            ghcr.io/${{ env.IMAGE }}
-          # flavor: |
-          #   latest=auto
-          # generate Docker tags based on the following events/attributes
-          tags: |
-            type=schedule,pattern=nightly
-            type=ref,event=branch
-            type=edge,branch=main
-            type=raw,value=apache
-          labels: |
-            maintainer=lightnear
+  #     - name: Docker meta
+  #       id: meta
+  #       uses: docker/metadata-action@v5
+  #       with:
+  #         # list of Docker images to use as base name for tags
+  #         images: |
+  #           ${{ env.IMAGE }}
+  #           ghcr.io/${{ env.IMAGE }}
+  #         # flavor: |
+  #         #   latest=auto
+  #         # generate Docker tags based on the following events/attributes
+  #         tags: |
+  #           type=schedule,pattern=nightly
+  #           type=ref,event=branch
+  #           type=edge,branch=main
+  #           type=raw,value=apache
+  #         labels: |
+  #           maintainer=lightnear
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+  #     - name: Set up QEMU
+  #       uses: docker/setup-qemu-action@v3
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+  #     - name: Set up Docker Buildx
+  #       uses: docker/setup-buildx-action@v3
 
-      - name: Login to DockerHub
-        if: github.event_name != 'pull_request'
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+  #     - name: Login to DockerHub
+  #       if: github.event_name != 'pull_request'
+  #       uses: docker/login-action@v3
+  #       with:
+  #         username: ${{ secrets.DOCKERHUB_USERNAME }}
+  #         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Log in to the Container registry
-        if: github.event_name != 'pull_request'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+  #     - name: Log in to the Container registry
+  #       if: github.event_name != 'pull_request'
+  #       uses: docker/login-action@v3
+  #       with:
+  #         registry: ghcr.io
+  #         username: ${{ github.actor }}
+  #         password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push
-        uses: docker/build-push-action@v5
-        with:
-          context: ./wordpress/apache
-          platforms: |
-            linux/amd64
-            linux/arm64
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=${{ env.IMAGE }}:buildcache-apache
-          cache-to: type=registry,ref=${{ env.IMAGE }}:buildcache-apache,mode=max
+  #     - name: Build and push
+  #       uses: docker/build-push-action@v5
+  #       with:
+  #         context: ./wordpress/apache
+  #         platforms: |
+  #           linux/amd64
+  #           linux/arm64
+  #         push: ${{ github.event_name != 'pull_request' }}
+  #         tags: ${{ steps.meta.outputs.tags }}
+  #         labels: ${{ steps.meta.outputs.labels }}
+  #         cache-from: type=registry,ref=${{ env.IMAGE }}:buildcache-apache
+  #         cache-to: type=registry,ref=${{ env.IMAGE }}:buildcache-apache,mode=max
 
-  wordpress-fpm:
-    if: ${{ always() }}
-    needs: wordpress-apache
-    runs-on: ubuntu-latest
-    env:
-      IMAGE: lightnear/wordpress
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          submodules: "recursive"
+  # wordpress-fpm:
+  #   if: ${{ always() }}
+  #   needs: wordpress-apache
+  #   runs-on: ubuntu-latest
+  #   env:
+  #     IMAGE: lightnear/wordpress
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+  #       with:
+  #         submodules: "recursive"
 
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          # list of Docker images to use as base name for tags
-          images: |
-            ${{ env.IMAGE }}
-            ghcr.io/${{ env.IMAGE }}
-          # flavor: |
-          #   latest=auto
-          # generate Docker tags based on the following events/attributes
-          tags: |
-            type=schedule,pattern=nightly
-            type=ref,event=branch
-            type=edge,branch=main
-            type=raw,value=fpm
-          labels: |
-            maintainer=lightnear
+  #     - name: Docker meta
+  #       id: meta
+  #       uses: docker/metadata-action@v5
+  #       with:
+  #         # list of Docker images to use as base name for tags
+  #         images: |
+  #           ${{ env.IMAGE }}
+  #           ghcr.io/${{ env.IMAGE }}
+  #         # flavor: |
+  #         #   latest=auto
+  #         # generate Docker tags based on the following events/attributes
+  #         tags: |
+  #           type=schedule,pattern=nightly
+  #           type=ref,event=branch
+  #           type=edge,branch=main
+  #           type=raw,value=fpm
+  #         labels: |
+  #           maintainer=lightnear
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+  #     - name: Set up QEMU
+  #       uses: docker/setup-qemu-action@v3
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+  #     - name: Set up Docker Buildx
+  #       uses: docker/setup-buildx-action@v3
 
-      - name: Login to DockerHub
-        if: github.event_name != 'pull_request'
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+  #     - name: Login to DockerHub
+  #       if: github.event_name != 'pull_request'
+  #       uses: docker/login-action@v3
+  #       with:
+  #         username: ${{ secrets.DOCKERHUB_USERNAME }}
+  #         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Log in to the Container registry
-        if: github.event_name != 'pull_request'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+  #     - name: Log in to the Container registry
+  #       if: github.event_name != 'pull_request'
+  #       uses: docker/login-action@v3
+  #       with:
+  #         registry: ghcr.io
+  #         username: ${{ github.actor }}
+  #         password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push
-        uses: docker/build-push-action@v5
-        with:
-          context: ./wordpress/fpm
-          platforms: |
-            linux/amd64
-            linux/arm64
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=${{ env.IMAGE }}:buildcache-fpm
-          cache-to: type=registry,ref=${{ env.IMAGE }}:buildcache-fpm,mode=max
+  #     - name: Build and push
+  #       uses: docker/build-push-action@v5
+  #       with:
+  #         context: ./wordpress/fpm
+  #         platforms: |
+  #           linux/amd64
+  #           linux/arm64
+  #         push: ${{ github.event_name != 'pull_request' }}
+  #         tags: ${{ steps.meta.outputs.tags }}
+  #         labels: ${{ steps.meta.outputs.labels }}
+  #         cache-from: type=registry,ref=${{ env.IMAGE }}:buildcache-fpm
+  #         cache-to: type=registry,ref=${{ env.IMAGE }}:buildcache-fpm,mode=max
 
-  chevereto-docker:
-    if: ${{ always() }}
-    needs: wordpress-fpm
-    runs-on: ubuntu-latest
-    env:
-      IMAGE: lightnear/chevereto
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          submodules: "recursive"
+  # chevereto-docker:
+  #   if: ${{ always() }}
+  #   needs: wordpress-fpm
+  #   runs-on: ubuntu-latest
+  #   env:
+  #     IMAGE: lightnear/chevereto
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+  #       with:
+  #         submodules: "recursive"
 
-      - name: Get FRP version
-        run: |
-          CHEREVETO_VERSION=$(curl -sX GET "https://api.github.com/repos/rodber/chevereto-free/releases/latest" | awk '/tag_name/{print $4;exit}' FS='[""]');
-          CHEREVETO_VERSION=${CHEREVETO_VERSION:-1.6.2}
-          echo "CHEREVETO_VERSION=$CHEREVETO_VERSION" >> $GITHUB_ENV
+  #     - name: Get FRP version
+  #       run: |
+  #         CHEREVETO_VERSION=$(curl -sX GET "https://api.github.com/repos/rodber/chevereto-free/releases/latest" | awk '/tag_name/{print $4;exit}' FS='[""]');
+  #         CHEREVETO_VERSION=${CHEREVETO_VERSION:-1.6.2}
+  #         echo "CHEREVETO_VERSION=$CHEREVETO_VERSION" >> $GITHUB_ENV
 
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          # list of Docker images to use as base name for tags
-          images: |
-            ${{ env.IMAGE }}
-            ghcr.io/${{ env.IMAGE }}
-          flavor: |
-            latest=auto
-          # generate Docker tags based on the following events/attributes
-          tags: |
-            type=schedule,pattern=nightly
-            type=ref,event=branch
-            type=edge,branch=main
-            type=semver,pattern={{version}},value=${{ env.CHEREVETO_VERSION }}
-          labels: |
-            maintainer=lightnear
+  #     - name: Docker meta
+  #       id: meta
+  #       uses: docker/metadata-action@v5
+  #       with:
+  #         # list of Docker images to use as base name for tags
+  #         images: |
+  #           ${{ env.IMAGE }}
+  #           ghcr.io/${{ env.IMAGE }}
+  #         flavor: |
+  #           latest=auto
+  #         # generate Docker tags based on the following events/attributes
+  #         tags: |
+  #           type=schedule,pattern=nightly
+  #           type=ref,event=branch
+  #           type=edge,branch=main
+  #           type=semver,pattern={{version}},value=${{ env.CHEREVETO_VERSION }}
+  #         labels: |
+  #           maintainer=lightnear
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+  #     - name: Set up QEMU
+  #       uses: docker/setup-qemu-action@v3
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+  #     - name: Set up Docker Buildx
+  #       uses: docker/setup-buildx-action@v3
 
-      - name: Login to DockerHub
-        if: github.event_name != 'pull_request'
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+  #     - name: Login to DockerHub
+  #       if: github.event_name != 'pull_request'
+  #       uses: docker/login-action@v3
+  #       with:
+  #         username: ${{ secrets.DOCKERHUB_USERNAME }}
+  #         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Log in to the Container registry
-        if: github.event_name != 'pull_request'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+  #     - name: Log in to the Container registry
+  #       if: github.event_name != 'pull_request'
+  #       uses: docker/login-action@v3
+  #       with:
+  #         registry: ghcr.io
+  #         username: ${{ github.actor }}
+  #         password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push
-        uses: docker/build-push-action@v5
-        with:
-          context: ./chevereto
-          platforms: |
-            linux/amd64
-            linux/arm64
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=${{ env.IMAGE }}:buildcache
-          cache-to: type=registry,ref=${{ env.IMAGE }}:buildcache,mode=max
+  #     - name: Build and push
+  #       uses: docker/build-push-action@v5
+  #       with:
+  #         context: ./chevereto
+  #         platforms: |
+  #           linux/amd64
+  #           linux/arm64
+  #         push: ${{ github.event_name != 'pull_request' }}
+  #         tags: ${{ steps.meta.outputs.tags }}
+  #         labels: ${{ steps.meta.outputs.labels }}
+  #         cache-from: type=registry,ref=${{ env.IMAGE }}:buildcache
+  #         cache-to: type=registry,ref=${{ env.IMAGE }}:buildcache,mode=max
 
   # singbox-docker:
   #   if: ${{ always() }}
@@ -1017,230 +1017,230 @@ jobs:
   #         # cache-from: type=registry,ref=${{ env.IMAGE }}:buildcache
   #         # cache-to: type=registry,ref=${{ env.IMAGE }}:buildcache,mode=max
 
-  singbox-build:
-    if: ${{ always() }}
-    needs: chevereto-docker
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      max-parallel: 1
-      matrix:
-        include:
-          # windows
-          - name: windows-amd64
-            goos: windows
-            goarch: amd64
-            goamd64: v1
-          - name: windows-amd64v3
-            goos: windows
-            goarch: amd64
-            goamd64: v3
-          # - name: windows-386
-          #   goos: windows
-          #   goarch: 386
-          # - name: windows-arm64
-          #   goos: windows
-          #   goarch: arm64
-          # - name: windows-arm32v7
-          #   goos: windows
-          #   goarch: arm
-          #   goarm: 7
+  # singbox-build:
+  #   if: ${{ always() }}
+  #   needs: chevereto-docker
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     fail-fast: false
+  #     max-parallel: 1
+  #     matrix:
+  #       include:
+  #         # windows
+  #         - name: windows-amd64
+  #           goos: windows
+  #           goarch: amd64
+  #           goamd64: v1
+  #         - name: windows-amd64v3
+  #           goos: windows
+  #           goarch: amd64
+  #           goamd64: v3
+  #         # - name: windows-386
+  #         #   goos: windows
+  #         #   goarch: 386
+  #         # - name: windows-arm64
+  #         #   goos: windows
+  #         #   goarch: arm64
+  #         # - name: windows-arm32v7
+  #         #   goos: windows
+  #         #   goarch: arm
+  #         #   goarm: 7
 
-          # linux
-          - name: linux-amd64
-            goos: linux
-            goarch: amd64
-            goamd64: v1
-          - name: linux-amd64v3
-            goos: linux
-            goarch: amd64
-            goamd64: v3
-          # - name: linux-386
-          #   goos: linux
-          #   goarch: 386
-          - name: linux-arm64
-            goos: linux
-            goarch: arm64
-          # - name: linux-armv5
-          #   goos: linux
-          #   goarch: arm
-          #   goarm: 5
-          # - name: linux-armv6
-          #   goos: linux
-          #   goarch: arm
-          #   goarm: 6
-          # - name: linux-armv7
-          #   goos: linux
-          #   goarch: arm
-          #   goarm: 7
-          # - name: linux-mips-softfloat
-          #   goos: linux
-          #   goarch: mips
-          #   gomips: softfloat
-          # - name: linux-mips-hardfloat
-          #   goos: linux
-          #   goarch: mips
-          #   gomips: hardfloat
-          # - name: linux-mipsel-softfloat
-          #   goos: linux
-          #   goarch: mipsle
-          #   gomips: softfloat
-          # - name: linux-mipsel-hardfloat
-          #   goos: linux
-          #   goarch: mipsle
-          #   gomips: hardfloat
-          # - name: linux-mips64
-          #   goos: linux
-          #   goarch: mips64
-          # - name: linux-mips64el
-          #   goos: linux
-          #   goarch: mips64le
-          # - name: linux-s390x
-          #   goos: linux
-          #   goarch: s390x
-          # darwin
-          - name: darwin-amd64
-            goos: darwin
-            goarch: amd64
-            goamd64: v1
-          - name: darwin-amd64v3
-            goos: darwin
-            goarch: amd64
-            goamd64: v3
-          # - name: darwin-arm64
-          #   goos: darwin
-          #   goarch: arm64
-          # freebsd
-          # - name: freebsd-amd64
-          #   goos: freebsd
-          #   goarch: amd64
-          #   goamd64: v1
-          # - name: freebsd-amd64-v3
-          #   goos: freebsd
-          #   goarch: amd64
-          #   goamd64: v3
-          # - name: freebsd-386
-          #   goos: freebsd
-          #   goarch: 386
-          # - name: freebsd-arm64
-          #   goos: freebsd
-          #   goarch: arm64
+  #         # linux
+  #         - name: linux-amd64
+  #           goos: linux
+  #           goarch: amd64
+  #           goamd64: v1
+  #         - name: linux-amd64v3
+  #           goos: linux
+  #           goarch: amd64
+  #           goamd64: v3
+  #         # - name: linux-386
+  #         #   goos: linux
+  #         #   goarch: 386
+  #         - name: linux-arm64
+  #           goos: linux
+  #           goarch: arm64
+  #         # - name: linux-armv5
+  #         #   goos: linux
+  #         #   goarch: arm
+  #         #   goarm: 5
+  #         # - name: linux-armv6
+  #         #   goos: linux
+  #         #   goarch: arm
+  #         #   goarm: 6
+  #         # - name: linux-armv7
+  #         #   goos: linux
+  #         #   goarch: arm
+  #         #   goarm: 7
+  #         # - name: linux-mips-softfloat
+  #         #   goos: linux
+  #         #   goarch: mips
+  #         #   gomips: softfloat
+  #         # - name: linux-mips-hardfloat
+  #         #   goos: linux
+  #         #   goarch: mips
+  #         #   gomips: hardfloat
+  #         # - name: linux-mipsel-softfloat
+  #         #   goos: linux
+  #         #   goarch: mipsle
+  #         #   gomips: softfloat
+  #         # - name: linux-mipsel-hardfloat
+  #         #   goos: linux
+  #         #   goarch: mipsle
+  #         #   gomips: hardfloat
+  #         # - name: linux-mips64
+  #         #   goos: linux
+  #         #   goarch: mips64
+  #         # - name: linux-mips64el
+  #         #   goos: linux
+  #         #   goarch: mips64le
+  #         # - name: linux-s390x
+  #         #   goos: linux
+  #         #   goarch: s390x
+  #         # darwin
+  #         - name: darwin-amd64
+  #           goos: darwin
+  #           goarch: amd64
+  #           goamd64: v1
+  #         - name: darwin-amd64v3
+  #           goos: darwin
+  #           goarch: amd64
+  #           goamd64: v3
+  #         # - name: darwin-arm64
+  #         #   goos: darwin
+  #         #   goarch: arm64
+  #         # freebsd
+  #         # - name: freebsd-amd64
+  #         #   goos: freebsd
+  #         #   goarch: amd64
+  #         #   goamd64: v1
+  #         # - name: freebsd-amd64-v3
+  #         #   goos: freebsd
+  #         #   goarch: amd64
+  #         #   goamd64: v3
+  #         # - name: freebsd-386
+  #         #   goos: freebsd
+  #         #   goarch: 386
+  #         # - name: freebsd-arm64
+  #         #   goos: freebsd
+  #         #   goarch: arm64
 
-    env:
-      GOOS: ${{ matrix.goos }}
-      GOARCH: ${{ matrix.goarch }}
-      GOAMD64: ${{ matrix.goamd64 }}
-      # GOARM: ${{ matrix.goarm }}
-      # GOMIPS: ${{ matrix.gomips }}
-      CGO_ENABLED: 0
-      TAGS: with_gvisor,with_quic,with_dhcp,with_wireguard,with_ech,with_utls,with_reality_server,with_acme,with_clash_api
+  #   env:
+  #     GOOS: ${{ matrix.goos }}
+  #     GOARCH: ${{ matrix.goarch }}
+  #     GOAMD64: ${{ matrix.goamd64 }}
+  #     # GOARM: ${{ matrix.goarm }}
+  #     # GOMIPS: ${{ matrix.gomips }}
+  #     CGO_ENABLED: 0
+  #     TAGS: with_gvisor,with_quic,with_dhcp,with_wireguard,with_ech,with_utls,with_reality_server,with_acme,with_clash_api
 
-    steps:
-      - name: Get latest version
-        run: |
-          LATEST_VERSION=""
-          until [ -n "$LATEST_VERSION" ]; do
-          LATEST_VERSION=$(curl -sX GET "https://api.github.com/repos/SagerNet/sing-box/releases/latest" | \
-          awk '/tag_name/{print $4;exit}' FS='[""]')
-          done
-          echo "SINGBOX_TAG=$LATEST_VERSION" >> $GITHUB_ENV
-          LATEST_VERSION=$(echo $LATEST_VERSION | tr -d 'v')
-          echo "SINGBOX_VERSION=$LATEST_VERSION" >> $GITHUB_ENV
-          echo "RELEASE_NAME=Released on $(date +%Y%m%d%H%M) ($LATEST_VERSION)" >> $GITHUB_ENV
-          echo "TAG_NAME=$(date +%Y%m%d%H%M)" >> $GITHUB_ENV
+  #   steps:
+  #     - name: Get latest version
+  #       run: |
+  #         LATEST_VERSION=""
+  #         until [ -n "$LATEST_VERSION" ]; do
+  #         LATEST_VERSION=$(curl -sX GET "https://api.github.com/repos/SagerNet/sing-box/releases/latest" | \
+  #         awk '/tag_name/{print $4;exit}' FS='[""]')
+  #         done
+  #         echo "SINGBOX_TAG=$LATEST_VERSION" >> $GITHUB_ENV
+  #         LATEST_VERSION=$(echo $LATEST_VERSION | tr -d 'v')
+  #         echo "SINGBOX_VERSION=$LATEST_VERSION" >> $GITHUB_ENV
+  #         echo "RELEASE_NAME=Released on $(date +%Y%m%d%H%M) ($LATEST_VERSION)" >> $GITHUB_ENV
+  #         echo "TAG_NAME=$(date +%Y%m%d%H%M)" >> $GITHUB_ENV
 
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          repository: SagerNet/sing-box
-          ref: ${{ env.SINGBOX_TAG }}
-          fetch-depth: 0
-          submodules: "recursive"
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+  #       with:
+  #         repository: SagerNet/sing-box
+  #         ref: ${{ env.SINGBOX_TAG }}
+  #         fetch-depth: 0
+  #         submodules: "recursive"
 
-      - name: Setup Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: "1.21"
-          check-latest: true
-          cache: false
+  #     - name: Setup Go
+  #       uses: actions/setup-go@v5
+  #       with:
+  #         go-version: "1.21"
+  #         check-latest: true
+  #         cache: false
 
-      - name: Build
-        id: build
-        run: |
-          # sed -i 's/CGO_ENABLED=0/CGO_ENABLED=1/g' Makefile
-          make
-          # export COMMIT=$(git rev-parse --short HEAD)
-          # export VERSION=$(go run ./cmd/internal/read_tag)
-          # go build -v -trimpath -tags "$TAGS" \
-          # -ldflags "-X \"github.com/sagernet/sing-box/constant.Version=$VERSION\" -s -w -buildid=" \
-          # ./cmd/sing-box
+  #     - name: Build
+  #       id: build
+  #       run: |
+  #         # sed -i 's/CGO_ENABLED=0/CGO_ENABLED=1/g' Makefile
+  #         make
+  #         # export COMMIT=$(git rev-parse --short HEAD)
+  #         # export VERSION=$(go run ./cmd/internal/read_tag)
+  #         # go build -v -trimpath -tags "$TAGS" \
+  #         # -ldflags "-X \"github.com/sagernet/sing-box/constant.Version=$VERSION\" -s -w -buildid=" \
+  #         # ./cmd/sing-box
 
-      - name: Tar files
-        run: tar -czvf sing-box-${{ matrix.name }}.tar.gz sing-box*
+  #     - name: Tar files
+  #       run: tar -czvf sing-box-${{ matrix.name }}.tar.gz sing-box*
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: sing-box-${{ matrix.name }}
-          path: sing-box*.tar.gz
+  #     - name: Upload artifact
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: sing-box-${{ matrix.name }}
+  #         path: sing-box*.tar.gz
 
-  release:
-    needs: singbox-build
-    name: release
-    runs-on: ubuntu-latest
-    steps:
-      - name: Get latest version
-        run: |
-          LATEST_VERSION=""
-          until [ -n "$LATEST_VERSION" ]; do
-          LATEST_VERSION=$(curl -sX GET "https://api.github.com/repos/SagerNet/sing-box/releases/latest" | \
-          awk '/tag_name/{print $4;exit}' FS='[""]')
-          done
-          echo "SINGBOX_TAG=$LATEST_VERSION" >> $GITHUB_ENV
-          SINGBOX_VERSION=$(echo $LATEST_VERSION | tr -d 'v')
-          echo "SINGBOX_VERSION=$SINGBOX_VERSION" >> $GITHUB_ENV
-          echo "RELEASE_NAME=sing-box $SINGBOX_VERSION" >> $GITHUB_ENV
-          echo "TAG_NAME=sing-box-$SINGBOX_VERSION" >> $GITHUB_ENV
+  # release:
+  #   needs: singbox-build
+  #   name: release
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Get latest version
+  #       run: |
+  #         LATEST_VERSION=""
+  #         until [ -n "$LATEST_VERSION" ]; do
+  #         LATEST_VERSION=$(curl -sX GET "https://api.github.com/repos/SagerNet/sing-box/releases/latest" | \
+  #         awk '/tag_name/{print $4;exit}' FS='[""]')
+  #         done
+  #         echo "SINGBOX_TAG=$LATEST_VERSION" >> $GITHUB_ENV
+  #         SINGBOX_VERSION=$(echo $LATEST_VERSION | tr -d 'v')
+  #         echo "SINGBOX_VERSION=$SINGBOX_VERSION" >> $GITHUB_ENV
+  #         echo "RELEASE_NAME=sing-box $SINGBOX_VERSION" >> $GITHUB_ENV
+  #         echo "TAG_NAME=sing-box-$SINGBOX_VERSION" >> $GITHUB_ENV
 
-      - name: Download artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: sing-box-linux-amd64
+  #     - name: Download artifact
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: sing-box-linux-amd64
 
-      - name: Download artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: sing-box-linux-amd64v3
+  #     - name: Download artifact
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: sing-box-linux-amd64v3
 
-      - name: Download artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: sing-box-linux-arm64
+  #     - name: Download artifact
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: sing-box-linux-arm64
 
-      - name: Download artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: sing-box-windows-amd64
+  #     - name: Download artifact
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: sing-box-windows-amd64
 
-      - name: Download artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: sing-box-windows-amd64v3
+  #     - name: Download artifact
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: sing-box-windows-amd64v3
 
-      - name: Download artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: sing-box-darwin-amd64
+  #     - name: Download artifact
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: sing-box-darwin-amd64
 
-      - name: Download artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: sing-box-darwin-amd64v3
+  #     - name: Download artifact
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: sing-box-darwin-amd64v3
 
-      - name: Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ env.TAG_NAME }}
-          name: ${{ env.RELEASE_NAME }}
-          files: |
-            sing-box*.tar.gz
+  #     - name: Release
+  #       uses: softprops/action-gh-release@v2
+  #       with:
+  #         tag_name: ${{ env.TAG_NAME }}
+  #         name: ${{ env.RELEASE_NAME }}
+  #         files: |
+  #           sing-box*.tar.gz

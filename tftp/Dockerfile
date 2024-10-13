@@ -2,8 +2,8 @@ FROM ubuntu:latest
 
 LABEL maintainer="lightnear<lightnear@qq.com>"
 
-ENV TZ Asia/Shanghai
-ENV LANG en_US.utf8
+ENV TZ=Asia/Shanghai
+ENV LANG=en_US.utf8
 
 RUN set -ex; \
     # sed -i 's|archive.ubuntu.com|mirrors.aliyun.com|g' /etc/apt/sources.list; \

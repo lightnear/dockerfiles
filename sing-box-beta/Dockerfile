@@ -1,13 +1,13 @@
 FROM golang:1.20-alpine AS builder
 LABEL maintainer="lightnear <lightnear2012@gmail.com>"
 
-ENV TZ Asia/Shanghai
-WORKDIR /go/src/github.com/sagernet
 ARG GOPROXY=""
-ENV GOPROXY ${GOPROXY}
+ENV TZ=Asia/Shanghai
+ENV GOPROXY=${GOPROXY}
 ENV CGO_ENABLED=1
 ENV TAGS="with_gvisor,with_quic,with_dhcp,with_wireguard,with_ech,with_utls,with_reality_server,with_acme,with_clash_api,with_v2ray_api"
 ENV GOAMD64="v3"
+WORKDIR /go/src/github.com/sagernet
 
 RUN set -ex; \
   apk upgrade; \
