@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.11.1](https://github.com/lightnear/dockerfiles/compare/v1.11.0...v1.11.1) (2024-10-13)
+
+
+### Bug Fixes
+
+* python version fixed to 3.10 ([a03e971](https://github.com/lightnear/dockerfiles/commit/a03e971197f31ba9271f3ffadaf67c6fd62ce9fa))
+
 ## [1.11.0](https://github.com/lightnear/dockerfiles/compare/v1.10.7...v1.11.0) (2024-10-13)
 
 
